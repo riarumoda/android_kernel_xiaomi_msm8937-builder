@@ -76,6 +76,10 @@ setup_toolchain() {
 
 # Add patches function
 add_patches() {
+    # Enable LTO
+    echo "Enabling LTO..."
+    echo "CONFIG_LTO_CLANG=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_SHADOW_CALL_STACK=y" >> $MAIN_DEFCONFIG
     # Apply misc patches
     echo "Applying misc patches..."
     wget -qO- $MISC_PATCH1 | patch -s -p1

@@ -200,7 +200,7 @@ main() {
         echo "Error: DEVICE_DEFCONFIG_IMPORT '$4' does not exist."
         exit 1
     fi
-    setup_environment "$1" "$2" "$3" "$4"
+    setup_environment "$1" "$2" "$3" "$4" "$5"
     setup_toolchain
     add_patches
     add_ksu
@@ -208,4 +208,4 @@ main() {
 }
 
 # Run the main function
-main "$1" "$2" "$3" "$4"
+main "$1" "$2" "$3" "$4" "$5"

@@ -48,15 +48,8 @@ setup_environment() {
         echo "Invalid KernelSU selector. Use --ksu=KSU_BLXX, --ksu=KSU_NEXT, or --ksu=NONE."
         exit 1
     fi
-    # TheSillyOk's Exports
-    export SILLY_LTO_PATCH="https://github.com/TheSillyOk/kernel_ls_patches/raw/refs/heads/master/fix_lto.patch"
-    export SILLY_KPATCH_NEXT_PATCH="https://github.com/TheSillyOk/kernel_ls_patches/raw/refs/heads/master/kpatch_fix.patch"
     # KernelSU umount patch
     export KSU_UMOUNT_PATCH="https://github.com/tbyool/android_kernel_xiaomi_sm6150/commit/64db0dfa2f8aa6c519dbf21eb65c9b89643cda3d.patch"
-    # Simple GPU Algorithm exports
-    export SIMPLEGPU_PATCH1="https://github.com/ximi-mojito-test/mojito_krenol/commit/466da67f1ee6a567c9bd60282123a07fc9ac75b5.patch"
-    export SIMPLEGPU_PATCH2="https://github.com/ximi-mojito-test/mojito_krenol/commit/f87bd5e18caba7dd0ba0b5c9147d59bb21ff606f.patch"
-    export SIMPLEGPU_PATCH3="https://github.com/ximi-mojito-test/mojito_krenol/commit/ebf97a47dc43b1285602c4d3cc9667377d021f1e.patch"
     # Misc optimization patches
     export MISC_PATCH1="https://github.com/tbyool/android_kernel_xiaomi_sm6150/commit/87734162e802e9e9a1b2e57c786ca582de97a0b5.patch"
 }
@@ -83,16 +76,6 @@ setup_toolchain() {
 
 # Add patches function
 add_patches() {
-    # Apply Simple GPU Algorithm patches
-    echo "Applying Simple GPU Algorithm patches..."
-    wget -qO- $SIMPLEGPU_PATCH1 | patch -s -p1
-    wget -qO- $SIMPLEGPU_PATCH2 | patch -s -p1
-    wget -qO- $SIMPLEGPU_PATCH3 | patch -s -p1
-    echo "CONFIG_SIMPLE_GPU_ALGORITHM=y" >> $MAIN_DEFCONFIG
-    # Enable LTO on non KSU_NEXT builds
-    echo "Applying LTO patch..."
-    wget -qO- $SILLY_LTO_PATCH | patch -s -p1 --fuzz=3
-    echo "CONFIG_LTO_CLANG=y" >> $MAIN_DEFCONFIG
     # Apply misc patches
     echo "Applying misc patches..."
     wget -qO- $MISC_PATCH1 | patch -s -p1
@@ -125,7 +108,6 @@ add_ksu() {
         echo "Setting up KernelSU..."
         # Apply umount backport and kpatch fixes
         wget -qO- $KSU_UMOUNT_PATCH | patch -s -p1
-        wget -qO- $SILLY_KPATCH_NEXT_PATCH | patch -s -p1
         if [[ "$KSU_SETUP_URI" == *"backslashxx/KernelSU"* ]]; then
             # Apply manual hook
             # disable for now, we're gonna use hookless mode

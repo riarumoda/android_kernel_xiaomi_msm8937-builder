@@ -71,18 +71,7 @@ setup_toolchain() {
 add_patches() {
     # Apply general config patches
     echo "Tuning the rest of default configs..."
-    sed -i 's/# CONFIG_PID_NS is not set/CONFIG_PID_NS=y/' $MAIN_DEFCONFIG
     sed -i 's/CONFIG_HZ_100=y/CONFIG_HZ_250=y/' $MAIN_DEFCONFIG
-    echo "CONFIG_POSIX_MQUEUE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_SYSVIPC=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_CGROUP_DEVICE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_DEVTMPFS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_IPC_NS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_DEVTMPFS_MOUNT=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE_STATS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE_HISTOGRAM=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_IOSCHED_BFQ=y" >> $MAIN_DEFCONFIG
     # Apply kernel rename to defconfig
     sed -i 's/CONFIG_LOCALVERSION="-perf"/CONFIG_LOCALVERSION="-perf-neon"/' arch/arm64/configs/vendor/feature/lineageos.config
     # Apply O3 flags into Kernel Makefile

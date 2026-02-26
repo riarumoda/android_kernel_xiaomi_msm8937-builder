@@ -9,10 +9,8 @@ setup_environment() {
     echo "Setting up build environment..."
     # Imports
     local MAIN_DEFCONFIG_IMPORT="$1"
-    local FEATURE1_DEFCONFIG_IMPORT="$2"
-    local FEATURE2_DEFCONFIG_IMPORT="$3"
-    local DEVICE_DEFCONFIG_IMPORT="$4"
-    local KERNELSU_SELECTOR="$5"
+    local DEVICE_DEFCONFIG_IMPORT="$2"
+    local KERNELSU_SELECTOR="$3"
     # Maintainer info
     export KBUILD_BUILD_USER=riaru-compile
     export KBUILD_BUILD_HOST=riaru.com
@@ -28,13 +26,9 @@ setup_environment() {
     export PATH="$CLANG_DIR/bin/:$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH"
     # Defconfig Settings
     export MAIN_DEFCONFIG="arch/arm64/configs/vendor/$MAIN_DEFCONFIG_IMPORT"
-    export FEATURE1_DEFCONFIG="arch/arm64/configs/vendor/feature/$FEATURE1_DEFCONFIG_IMPORT"
-    export FEATURE2_DEFCONFIG="arch/arm64/configs/vendor/feature/$FEATURE2_DEFCONFIG_IMPORT"
-    export DEVICE_DEFCONFIG="arch/arm64/configs/vendor/xiaomi/msm8937/$DEVICE_DEFCONFIG_IMPORT"
+    export DEVICE_DEFCONFIG="arch/arm64/configs/vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
     export COMPILE_MAIN_DEFCONFIG="vendor/$MAIN_DEFCONFIG_IMPORT"
-    export COMPILE_FEATURE1_DEFCONFIG="vendor/feature/$FEATURE1_DEFCONFIG_IMPORT"
-    export COMPILE_FEATURE2_DEFCONFIG="vendor/feature/$FEATURE2_DEFCONFIG_IMPORT"
-    export COMPILE_DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/$DEVICE_DEFCONFIG_IMPORT"
+    export COMPILE_DEVICE_DEFCONFIG="vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
     # KernelSU Settings
     if [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_BLXX" ]]; then
         export KSU_SETUP_URI="https://github.com/backslashxx/KernelSU/raw/refs/heads/master/kernel/setup.sh"
@@ -45,7 +39,7 @@ setup_environment() {
         export KSU_BRANCH=""
         export KSU_GENERAL_PATCH=""
     else
-        echo "Invalid KernelSU selector. Use --ksu=KSU_BLXX, --ksu=KSU_NEXT, or --ksu=NONE."
+        echo "Invalid KernelSU selector. Use --ksu=KSU_BLXX, or --ksu=NONE."
         exit 1
     fi
     # KernelSU umount patch
@@ -76,9 +70,21 @@ setup_toolchain() {
 add_patches() {
     # Apply general config patches
     echo "Tuning the rest of default configs..."
+    sed -i 's/# CONFIG_PID_NS is not set/CONFIG_PID_NS=y/' $MAIN_DEFCONFIG
     sed -i 's/CONFIG_HZ_100=y/CONFIG_HZ_250=y/' $MAIN_DEFCONFIG
+    echo "CONFIG_POSIX_MQUEUE=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_SYSVIPC=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_CGROUP_DEVICE=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_DEVTMPFS=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_IPC_NS=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_DEVTMPFS_MOUNT=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_FSCACHE=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_FSCACHE_STATS=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_FSCACHE_HISTOGRAM=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_SECURITY_SELINUX_DEVELOP=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_IOSCHED_BFQ=y" >> $MAIN_DEFCONFIG
     # Apply kernel rename to defconfig
-    # sed -i 's/CONFIG_LOCALVERSION="-perf"/CONFIG_LOCALVERSION="-perf-neon"/' $MAIN_DEFCONFIG
+    sed -i 's/CONFIG_LOCALVERSION="-perf"/CONFIG_LOCALVERSION="-perf-neon"/' arch/arm64/configs/vendor/feature/lineageos.config
     # Apply O3 flags into Kernel Makefile
     sed -i 's/KBUILD_CFLAGS\s\++= -O2/KBUILD_CFLAGS   += -O3/g' Makefile
     sed -i 's/LDFLAGS\s\++= -O2/LDFLAGS += -O3/g' Makefile
@@ -117,7 +123,24 @@ compile_kernel() {
     git commit -m "cleanup: applied patches before build" &> /dev/null
     # Start compilation
     echo "Starting kernel compilation..."
-    make -s O=out ARCH=arm64 $COMPILE_MAIN_DEFCONFIG vendor/common.config vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config $COMPILE_DEVICE_DEFCONFIG $COMPILE_FEATURE1_DEFCONFIG $COMPILE_FEATURE2_DEFCONFIG vendor/feature/lmkd.config vendor/qualcomm/msm8937/qrd.config  &> /dev/null
+    if [[ "$COMPILE_MAIN_DEFCONFIG" == *"msm8937"* ]]; then
+        # Core configs
+        make -s O=out ARCH=arm64 $COMPILE_MAIN_DEFCONFIG vendor/msm8937-legacy.config vendor/common.config &> /dev/null
+        # Device configs
+        make -s O=out ARCH=arm64 $COMPILE_DEVICE_DEFCONFIG vendor/xiaomi/msm8937/common.config &> /dev/null
+        # Feature configs
+        make -s O=out ARCH=arm64 vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/lineageos.config vendor/feature/lmkd.config vendor/feature/lto.config vendor/feature/wireguard.config &> /dev/null
+    elif [[ "$COMPILE_MAIN_DEFCONFIG" == *"bengal"* ]]; then
+        # Core configs
+        make -s O=out ARCH=arm64 $COMPILE_MAIN_DEFCONFIG vendor/common.config &> /dev/null
+        # Device configs
+        make -s O=out ARCH=arm64 $COMPILE_DEVICE_DEFCONFIG &> /dev/null
+        # Feature configs
+        make -s O=out ARCH=arm64 vendor/feature/android-13.config vendor/feature/erofs.config vendor/feature/lineageos.config vendor/feature/lmkd.config vendor/feature/lto.config vendor/feature/wireguard.config &> /dev/null
+    else
+        echo "Unknown main defconfig, cannot determine which config set to use."
+        exit 1
+    fi
     make -j$(nproc --all) \
         O=out \
         ARCH=arm64 \
@@ -138,28 +161,20 @@ compile_kernel() {
 main() {
     # Check if all four arguments are valid
     echo "Validating input arguments..."
-    if [ $# -ne 5 ]; then
-        echo "Usage: $0 <MAIN_DEFCONFIG_IMPORT> <FEATURE1_DEFCONFIG_IMPORT> <FEATURE2_DEFCONFIG_IMPORT> <DEVICE_DEFCONFIG_IMPORT> <KERNELSU_SELECTOR>"
-        echo "Example: $0 sdmsteppe-perf_defconfig sweet.config --ksu=KSU_BLXX"
+    if [ $# -ne 3 ]; then
+        echo "Usage: $0 <MAIN_DEFCONFIG_IMPORT> <DEVICE_DEFCONFIG_IMPORT> <KERNELSU_SELECTOR>"
+        echo "Example: $0 msm8937-perf_defconfig msm8937/mi8937.config --ksu=KSU_BLXX"
         exit 1
     fi
     if [ ! -f "arch/arm64/configs/vendor/$1" ]; then
         echo "Error: MAIN_DEFCONFIG_IMPORT '$1' does not exist."
         exit 1
     fi
-    if [ ! -f "arch/arm64/configs/vendor/feature/$2" ]; then
-        echo "Error: FEATURE1_DEFCONFIG_IMPORT '$2' does not exist."
+    if [ ! -f "arch/arm64/configs/vendor/xiaomi/$2" ]; then
+        echo "Error: DEVICE_DEFCONFIG_IMPORT '$2' does not exist."
         exit 1
     fi
-    if [ ! -f "arch/arm64/configs/vendor/feature/$3" ]; then
-        echo "Error: FEATURE2_DEFCONFIG_IMPORT '$3' does not exist."
-        exit 1
-    fi
-    if [ ! -f "arch/arm64/configs/vendor/xiaomi/msm8937/$4" ]; then
-        echo "Error: DEVICE_DEFCONFIG_IMPORT '$4' does not exist."
-        exit 1
-    fi
-    setup_environment "$1" "$2" "$3" "$4" "$5"
+    setup_environment "$1" "$2" "$3"
     setup_toolchain
     add_patches
     add_ksu
@@ -167,4 +182,4 @@ main() {
 }
 
 # Run the main function
-main "$1" "$2" "$3" "$4" "$5"
+main "$1" "$2" "$3"

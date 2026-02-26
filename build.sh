@@ -29,7 +29,6 @@ setup_environment() {
     export DEVICE_DEFCONFIG="arch/arm64/configs/vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
     export COMPILE_MAIN_DEFCONFIG="vendor/$MAIN_DEFCONFIG_IMPORT"
     export COMPILE_DEVICE_DEFCONFIG="vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
-    export COMPILE_FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/lineageos.config vendor/feature/lmkd.config"
     # KernelSU Settings
     if [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_BLXX" ]]; then
         export KSU_SETUP_URI="https://github.com/backslashxx/KernelSU/raw/refs/heads/master/kernel/setup.sh"
@@ -107,7 +106,7 @@ compile_kernel() {
     git commit -m "cleanup: applied patches before build" &> /dev/null
     # Start compilation
     echo "Starting kernel compilation..."
-    make -s O=out ARCH=arm64 vendor/common.config $COMPILE_MAIN_DEFCONFIG vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config $COMPILE_DEVICE_DEFCONFIG $COMPILE_FEATURE_DEFCONFIG &> /dev/null
+    make -s O=out ARCH=arm64 vendor/common.config $COMPILE_MAIN_DEFCONFIG vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config $COMPILE_DEVICE_DEFCONFIG vendor/feature/android-12.config vendor/feature/lineageos.config vendor/feature/lmkd.config vendor/qualcomm/msm8937/qrd.config &> /dev/null
     make -j$(nproc --all) \
         O=out \
         ARCH=arm64 \

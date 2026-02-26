@@ -53,9 +53,9 @@ jobs:
           cd android_kernel_xiaomi_msm8937/
           echo "Starting to compile..."
           if [[ "${{ matrix.build-type }}" == "mi8937-ksu" ]]; then
-            ./build.sh msm8937-perf_defconfig android-12.config lineageos.config mi8937.config --ksu=KSU_BLXX
+            ./build.sh msm8937-perf_defconfig android-12.config lineageos.config mi8937_exclude_mi8917.config --ksu=KSU_BLXX
           elif [[ "${{ matrix.build-type }}" == "mi8937-noksu" ]]; then
-            ./build.sh msm8937-perf_defconfig android-12.config lineageos.config mi8937.config --ksu=NONE
+            ./build.sh msm8937-perf_defconfig android-12.config lineageos.config mi8937_exclude_mi8917.config --ksu=NONE
           fi
           cd ..
           ls -la android_kernel_xiaomi_msm8937/out/arch/arm64/boot/

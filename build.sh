@@ -50,8 +50,6 @@ setup_environment() {
     fi
     # KernelSU umount patch
     export KSU_UMOUNT_PATCH="https://github.com/tbyool/android_kernel_xiaomi_sm6150/commit/64db0dfa2f8aa6c519dbf21eb65c9b89643cda3d.patch"
-    # Misc optimization patches
-    export MISC_PATCH1="https://github.com/tbyool/android_kernel_xiaomi_sm6150/commit/87734162e802e9e9a1b2e57c786ca582de97a0b5.patch"
 }
 
 # Setup toolchain function
@@ -76,30 +74,14 @@ setup_toolchain() {
 
 # Add patches function
 add_patches() {
-    # Apply misc patches
-    echo "Applying misc patches..."
-    wget -qO- $MISC_PATCH1 | patch -s -p1
     # Apply general config patches
     echo "Tuning the rest of default configs..."
-    sed -i 's/# CONFIG_PID_NS is not set/CONFIG_PID_NS=y/' $MAIN_DEFCONFIG
     sed -i 's/CONFIG_HZ_100=y/CONFIG_HZ_250=y/' $MAIN_DEFCONFIG
-    echo "CONFIG_POSIX_MQUEUE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_SYSVIPC=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_CGROUP_DEVICE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_DEVTMPFS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_IPC_NS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_DEVTMPFS_MOUNT=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_EROFS_FS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE_STATS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE_HISTOGRAM=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_SECURITY_SELINUX_DEVELOP=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_IOSCHED_BFQ=y" >> $MAIN_DEFCONFIG
     # Apply kernel rename to defconfig
     # sed -i 's/CONFIG_LOCALVERSION="-perf"/CONFIG_LOCALVERSION="-perf-neon"/' $MAIN_DEFCONFIG
     # Apply O3 flags into Kernel Makefile
-    # sed -i 's/KBUILD_CFLAGS\s\++= -O2/KBUILD_CFLAGS   += -O3/g' Makefile
-    # sed -i 's/LDFLAGS\s\++= -O2/LDFLAGS += -O3/g' Makefile
+    sed -i 's/KBUILD_CFLAGS\s\++= -O2/KBUILD_CFLAGS   += -O3/g' Makefile
+    sed -i 's/LDFLAGS\s\++= -O2/LDFLAGS += -O3/g' Makefile
 }
 
 # Add KernelSU function
@@ -117,11 +99,6 @@ add_ksu() {
             # Manual Config Enablement
             echo "CONFIG_KSU=y" >> $MAIN_DEFCONFIG
             echo "CONFIG_KSU_TAMPER_SYSCALL_TABLE=y" >> $MAIN_DEFCONFIG
-            echo "CONFIG_KPROBES=y" >> $MAIN_DEFCONFIG
-            echo "CONFIG_HAVE_KPROBES=y" >> $MAIN_DEFCONFIG
-            echo "CONFIG_KPROBE_EVENTS=y" >> $MAIN_DEFCONFIG
-            echo "CONFIG_KRETPROBES=y" >> $MAIN_DEFCONFIG
-            echo "CONFIG_HAVE_SYSCALL_TRACEPOINTS=y" >> $MAIN_DEFCONFIG
         fi
     else
         echo "No KernelSU to set up."

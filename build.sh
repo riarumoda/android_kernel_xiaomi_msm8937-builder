@@ -69,22 +69,6 @@ setup_toolchain() {
 
 # Add patches function
 add_patches() {
-    # Apply general config patches
-    echo "Tuning the rest of default configs..."
-    sed -i 's/# CONFIG_PID_NS is not set/CONFIG_PID_NS=y/' $MAIN_DEFCONFIG
-    sed -i 's/CONFIG_HZ_100=y/CONFIG_HZ_250=y/' $MAIN_DEFCONFIG
-    echo "CONFIG_POSIX_MQUEUE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_SYSVIPC=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_CGROUP_DEVICE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_DEVTMPFS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_IPC_NS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_DEVTMPFS_MOUNT=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE_STATS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE_HISTOGRAM=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_SECURITY_SELINUX_DEVELOP=y" >> $MAIN_DEFCONFIG
-    # Apply kernel rename to defconfig
-    sed -i 's/CONFIG_LOCALVERSION="-perf"/CONFIG_LOCALVERSION="-perf-neon"/' arch/arm64/configs/vendor/feature/lineageos.config
     # Apply O3 flags into Kernel Makefile
     sed -i 's/KBUILD_CFLAGS\s\++= -O2/KBUILD_CFLAGS   += -O3/g' Makefile
     sed -i 's/LDFLAGS\s\++= -O2/LDFLAGS += -O3/g' Makefile
@@ -123,13 +107,7 @@ compile_kernel() {
     git commit -m "cleanup: applied patches before build" &> /dev/null
     # Start compilation
     echo "Starting kernel compilation..."
-    if [[ "$COMPILE_MAIN_DEFCONFIG" == *"msm8937"* ]]; then
-        # configs
-        make -s O=out ARCH=arm64 vendor/common.config $COMPILE_MAIN_DEFCONFIG vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config $COMPILE_DEVICE_DEFCONFIG $COMPILE_FEATURE_DEFCONFIG &> /dev/null
-    else
-        # configs
-        make -s O=out ARCH=arm64 vendor/common.config $COMPILE_MAIN_DEFCONFIG $COMPILE_DEVICE_DEFCONFIG $COMPILE_FEATURE_DEFCONFIG &> /dev/null
-    fi
+    make -s O=out ARCH=arm64 vendor/common.config $COMPILE_MAIN_DEFCONFIG vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config $COMPILE_DEVICE_DEFCONFIG $COMPILE_FEATURE_DEFCONFIG &> /dev/null
     make -j$(nproc --all) \
         O=out \
         ARCH=arm64 \

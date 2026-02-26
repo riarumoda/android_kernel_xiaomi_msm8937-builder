@@ -29,7 +29,7 @@ setup_environment() {
     export DEVICE_DEFCONFIG="arch/arm64/configs/vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
     export COMPILE_MAIN_DEFCONFIG="vendor/$MAIN_DEFCONFIG_IMPORT"
     export COMPILE_DEVICE_DEFCONFIG="vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
-    export COMPILE_FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/lineageos.config vendor/feature/lmkd.config vendor/feature/wireguard.config"
+    export COMPILE_FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/lineageos.config vendor/feature/lmkd.config"
     # KernelSU Settings
     if [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_BLXX" ]]; then
         export KSU_SETUP_URI="https://github.com/backslashxx/KernelSU/raw/refs/heads/master/kernel/setup.sh"

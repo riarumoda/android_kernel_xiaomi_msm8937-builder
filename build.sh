@@ -96,10 +96,10 @@ add_patches() {
     echo "CONFIG_SECURITY_SELINUX_DEVELOP=y" >> $MAIN_DEFCONFIG
     echo "CONFIG_IOSCHED_BFQ=y" >> $MAIN_DEFCONFIG
     # Apply kernel rename to defconfig
-    sed -i 's/CONFIG_LOCALVERSION="-perf"/CONFIG_LOCALVERSION="-perf-neon"/' $MAIN_DEFCONFIG
+    # sed -i 's/CONFIG_LOCALVERSION="-perf"/CONFIG_LOCALVERSION="-perf-neon"/' $MAIN_DEFCONFIG
     # Apply O3 flags into Kernel Makefile
-    sed -i 's/KBUILD_CFLAGS\s\++= -O2/KBUILD_CFLAGS   += -O3/g' Makefile
-    sed -i 's/LDFLAGS\s\++= -O2/LDFLAGS += -O3/g' Makefile
+    # sed -i 's/KBUILD_CFLAGS\s\++= -O2/KBUILD_CFLAGS   += -O3/g' Makefile
+    # sed -i 's/LDFLAGS\s\++= -O2/LDFLAGS += -O3/g' Makefile
 }
 
 # Add KernelSU function

@@ -71,13 +71,13 @@ jobs:
             sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
             sed -i 's/device.name1=sweet/device.name1=mi8937/' AnyKernel3/anykernel.sh
             sed -i 's/device.name2=sweetin/device.name2=mi8937/' AnyKernel3/anykernel.sh
-            sed -i 's/BLOCK=/dev/block/bootdevice/by-name/boot/BLOCK=/dev/block/by-name/boot/' AnyKernel3/anykernel.sh
+            sed -i 's|/dev/block/bootdevice/by-name/|/dev/block/by-name/|g' AnyKernel3/anykernel.sh
             sed -i 's/sweet (sm6150)/mi8937 (msm8937)/g' AnyKernel3/banner
           elif [[ "${{ matrix.build-type }}" == "mi8937-noksu" ]]; then
             sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
             sed -i 's/device.name1=sweet/device.name1=mi8937/' AnyKernel3/anykernel.sh
             sed -i 's/device.name2=sweetin/device.name2=mi8937/' AnyKernel3/anykernel.sh
-            sed -i 's/BLOCK=/dev/block/bootdevice/by-name/boot/BLOCK=/dev/block/by-name/boot/' AnyKernel3/anykernel.sh
+            sed -i 's|/dev/block/bootdevice/by-name/|/dev/block/by-name/|g' AnyKernel3/anykernel.sh
             sed -i 's/sweet (sm6150)/mi8937 (msm8937)/g' AnyKernel3/banner
           fi
 

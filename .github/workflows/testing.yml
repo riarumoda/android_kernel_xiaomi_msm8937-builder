@@ -53,7 +53,7 @@ jobs:
           cd android_kernel_xiaomi_msm8937/
           echo "Starting to compile..."
           if [[ "${{ matrix.build-type }}" == "mi8937" ]]; then
-            ./build.sh msm8937-perf_defconfig msm8937/mi8937_exclude_mi8917.config --ksu=KSU_BLXX
+            ./build.sh msm8937-perf_defconfig msm8937/mi8937.config --ksu=KSU_BLXX
           elif [[ "${{ matrix.build-type }}" == "mi8917" ]]; then
             ./build.sh msm8937-perf_defconfig msm8937/mi8917.config --ksu=KSU_BLXX
           fi

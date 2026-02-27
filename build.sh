@@ -124,8 +124,8 @@ compile_kernel() {
     mkdir -p out
     ARCH=arm64 ./scripts/kconfig/merge_config.sh -O out/ -m \
         $MAIN_DEFCONFIG \
-        $DEVICE_DEFCONFIG \
         $COMMON_DEFCONFIG \
+        $DEVICE_DEFCONFIG \
         $FEATURE_DEFCONFIG
     make -j$(nproc --all) \
         O=out \

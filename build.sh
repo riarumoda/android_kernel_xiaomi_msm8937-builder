@@ -32,7 +32,7 @@ setup_environment() {
     export COMPILE_FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/lineageos.config vendor/feature/lmkd.config vendor/feature/wireguard.config vendor/qualcomm/msm8937/qrd.config"
     # Defconfig common Settings
     if [[ "$COMPILE_MAIN_DEFCONFIG" == *"mi8937"* ]]; then
-        export COMPILE_COMMON_DEFCONFIG="vendor/common.config vendor/debugfs.config vendor/msm-clk.config vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config"
+        export COMPILE_COMMON_DEFCONFIG="vendor/common.config vendor/debugfs.config vendor/msm-clk.config vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/optional/latest-camera-stack.config vendor/xiaomi/msm8937/optional/mainline-drivers.config"
     else
         export COMPILE_COMMON_DEFCONFIG="vendor/common.config vendor/debugfs.config vendor/msm-clk.config"
     fi

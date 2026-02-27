@@ -41,9 +41,9 @@ jobs:
             rm -rf android_kernel_xiaomi_msm8937
           fi
           if [[ "${{ matrix.build-type }}" == "mi8937" ]]; then
-            git clone https://github.com/Mi-Thorium/kernel_msm-4.19 --depth=1 -b "mithorium/lineage-21" android_kernel_xiaomi_msm8937
+            git clone https://github.com/LineageOS/android_kernel_xiaomi_msm8937 --depth=1 -b "lineage-23.2" android_kernel_xiaomi_msm8937
           elif [[ "${{ matrix.build-type }}" == "mi8917" ]]; then
-            git clone https://github.com/Mi-Thorium/kernel_msm-4.19 --depth=1 -b "mithorium/lineage-21" android_kernel_xiaomi_msm8937
+            git clone https://github.com/LineageOS/android_kernel_xiaomi_msm8937 --depth=1 -b "lineage-23.2" android_kernel_xiaomi_msm8937
           fi
           cp build.sh android_kernel_xiaomi_msm8937/
           chmod +x ./android_kernel_xiaomi_msm8937/build.sh

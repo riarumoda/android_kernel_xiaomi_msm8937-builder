@@ -91,6 +91,9 @@ add_patches() {
     echo "CONFIG_SECURITY_SELINUX_DEVELOP=y" >> $MAIN_DEFCONFIG
     # Apply kernel rename to defconfig
     sed -i 's/CONFIG_LOCALVERSION="-perf"/CONFIG_LOCALVERSION="-perf-neon"/' arch/arm64/configs/vendor/feature/lineageos.config
+    # Make image smaller by disabling kallsyms
+    echo "CONFIG_KALLSYMS=n" >> $MAIN_DEFCONFIG
+    echo "CONFIG_KALLSYMS_ALL=n" >> $MAIN_DEFCONFIG
     # Enable config mismatch
     # echo "CONFIG_DEBUG_SECTION_MISMATCH=y" >> $MAIN_DEFCONFIG
 }

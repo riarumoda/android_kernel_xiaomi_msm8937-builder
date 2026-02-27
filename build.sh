@@ -57,6 +57,7 @@ setup_toolchain() {
     echo "Setting up toolchain..."
     if [ ! -d "$PWD/clang" ]; then
         # git clone $CLANG_REPO_URI --depth=1 clang &> /dev/null
+        mkdir -p clang
         wget -qO- $CLANG_REPO_URI | tar xz -C $PWD/clang --strip-components=1
     else
         echo "Local clang dir found, using it."

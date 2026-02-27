@@ -23,7 +23,7 @@ setup_environment() {
     export CLANG_DIR=$PWD/clang
     export GCC64_DIR=$PWD/gcc64
     export GCC32_DIR=$PWD/gcc32
-    export PATH="$CLANG_DIR/bin/:$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH"
+    export PATH="$CLANG_DIR/clang-r547379/bin/:$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH"
     # Defconfig Settings
     export MAIN_DEFCONFIG="arch/arm64/configs/vendor/$MAIN_DEFCONFIG_IMPORT"
     export DEVICE_DEFCONFIG="arch/arm64/configs/vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"

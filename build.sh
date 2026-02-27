@@ -17,7 +17,7 @@ setup_environment() {
     export GIT_NAME="$KBUILD_BUILD_USER"
     export GIT_EMAIL="$KBUILD_BUILD_USER@$KBUILD_BUILD_HOST"
     # GCC and Clang settings
-    export CLANG_REPO_URI="https://git.codelinaro.org/clo/la/kernelplatform/prebuilts-master/clang/host/linux-x86.git"
+    export CLANG_REPO_URI="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz"
     export GCC_64_REPO_URI="https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9.git"
     export GCC_32_REPO_URI="https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9.git"
     export CLANG_DIR=$PWD/clang
@@ -56,7 +56,8 @@ setup_environment() {
 setup_toolchain() {
     echo "Setting up toolchain..."
     if [ ! -d "$PWD/clang" ]; then
-        git clone $CLANG_REPO_URI --depth=1 clang &> /dev/null
+        # git clone $CLANG_REPO_URI --depth=1 clang &> /dev/null
+        wget -qO- $CLANG_REPO_URI | tar xz -C $PWD/clang --strip-components=1
     else
         echo "Local clang dir found, using it."
     fi

@@ -27,14 +27,13 @@ setup_environment() {
     # Defconfig Settings
     export MAIN_DEFCONFIG="arch/arm64/configs/vendor/$MAIN_DEFCONFIG_IMPORT"
     export DEVICE_DEFCONFIG="arch/arm64/configs/vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
-    export COMPILE_MAIN_DEFCONFIG="vendor/$MAIN_DEFCONFIG_IMPORT"
-    export COMPILE_DEVICE_DEFCONFIG="vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
-    export COMPILE_FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/lineageos.config vendor/feature/lmkd.config vendor/feature/wireguard.config vendor/qualcomm/msm8937/qrd.config"
+    export FEATURE_DEFCONFIG="arch/arm64/configs/vendor/feature/android-12.config arch/arm64/configs/vendor/feature/erofs.config arch/arm64/configs/vendor/feature/lineageos.config arch/arm64/configs/vendor/feature/lmkd.config arch/arm64/configs/vendor/feature/wireguard.config arch/arm64/configs/vendor/qualcomm/msm8937/qrd.config"
+    export CENTER_STAGE_DEFCONFIG="neon-perf_defconfig"
     # Defconfig common Settings
-    if [[ "$COMPILE_MAIN_DEFCONFIG" == *"mi8937"* ]]; then
-        export COMPILE_COMMON_DEFCONFIG="vendor/common.config vendor/debugfs.config vendor/msm-clk.config vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/optional/latest-camera-stack.config vendor/xiaomi/msm8937/optional/mainline-drivers.config"
+    if [[ "$MAIN_DEFCONFIG" == *"mi8937"* ]]; then
+        export COMMON_DEFCONFIG="arch/arm64/configs/vendor/common.config arch/arm64/configs/vendor/debugfs.config arch/arm64/configs/vendor/msm-clk.config arch/arm64/configs/vendor/msm8937-legacy.config arch/arm64/configs/vendor/xiaomi/msm8937/common.config"
     else
-        export COMPILE_COMMON_DEFCONFIG="vendor/common.config vendor/debugfs.config vendor/msm-clk.config"
+        export COMMON_DEFCONFIG="arch/arm64/configs/vendor/common.config arch/arm64/configs/vendor/debugfs.config arch/arm64/configs/vendor/msm-clk.config"
     fi
     # KernelSU Settings
     if [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_BLXX" ]]; then
@@ -120,6 +119,13 @@ add_ksu() {
 
 # Compile kernel function
 compile_kernel() {
+    # Merge all of the configs into one defconfig
+    echo "Merging defconfigs..."
+    mkdir -p out
+    ARCH=arm64 ./scripts/kconfig/merge_config.sh -O out/ -m "$MAIN_DEFCONFIG $DEVICE_DEFCONFIG $COMMON_DEFCONFIG $FEATURE_DEFCONFIG"
+    make O=out ARCH=arm64 savedefconfig
+    cp out/defconfig arch/arm64/configs/$CENTER_STAGE_DEFCONFIG
+    rm -rf out
     # Do a git cleanup before compiling
     echo "Cleaning up git before compiling..."
     git config user.email $GIT_EMAIL
@@ -129,7 +135,7 @@ compile_kernel() {
     git commit -m "cleanup: applied patches before build" &> /dev/null
     # Start compilation
     echo "Starting kernel compilation..."
-    make -s O=out ARCH=arm64 $COMPILE_MAIN_DEFCONFIG $COMPILE_DEVICE_DEFCONFIG $COMPILE_COMMON_DEFCONFIG $COMPILE_FEATURE_DEFCONFIG &> /dev/null
+    make -s O=out ARCH=arm64 $CENTER_STAGE_DEFCONFIG &> /dev/null
     make -j$(nproc --all) \
         O=out \
         ARCH=arm64 \

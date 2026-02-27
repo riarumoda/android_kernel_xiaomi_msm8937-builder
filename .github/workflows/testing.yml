@@ -91,6 +91,6 @@ jobs:
       - name: Pack & upload artifacts (defconfigs)
         uses: actions/upload-artifact@v6
         with:
-          name: defconfigs
+          name: defconfigs-${{ matrix.build-type }}
           path: |
             android_kernel_xiaomi_msm8937/arch/arm64/configs/*

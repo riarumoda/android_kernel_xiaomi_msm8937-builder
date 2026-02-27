@@ -32,9 +32,9 @@ setup_environment() {
     export COMPILE_FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/lineageos.config vendor/feature/lmkd.config vendor/feature/wireguard.config"
     # Defconfig common Settings
     if [[ "$COMPILE_MAIN_DEFCONFIG" == *"mi8937"* ]]; then
-        export COMPILE_COMMON_DEFCONFIG="vendor/common.config vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config"
+        export COMPILE_COMMON_DEFCONFIG="vendor/common.config vendor/debugfs.config vendor/msm-clk.config vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config"
     else
-        export COMPILE_COMMON_DEFCONFIG="vendor/common.config"
+        export COMPILE_COMMON_DEFCONFIG="vendor/common.config vendor/debugfs.config vendor/msm-clk.config"
     fi
     # KernelSU Settings
     if [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_BLXX" ]]; then

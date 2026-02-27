@@ -27,7 +27,7 @@ setup_environment() {
     # Defconfig Settings
     export MAIN_DEFCONFIG="arch/arm64/configs/vendor/$MAIN_DEFCONFIG_IMPORT"
     export DEVICE_DEFCONFIG="arch/arm64/configs/vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
-    export FEATURE_DEFCONFIG="arch/arm64/configs/vendor/feature/android-12.config arch/arm64/configs/vendor/feature/erofs.config arch/arm64/configs/vendor/feature/lineageos.config arch/arm64/configs/vendor/feature/lmkd.config arch/arm64/configs/vendor/feature/wireguard.config arch/arm64/configs/vendor/qualcomm/msm8937/qrd.config"
+    export FEATURE_DEFCONFIG="arch/arm64/configs/vendor/feature/android-12.config arch/arm64/configs/vendor/feature/erofs.config arch/arm64/configs/vendor/feature/lineageos.config arch/arm64/configs/vendor/feature/lmkd.config arch/arm64/configs/vendor/feature/lto.config arch/arm64/configs/vendor/feature/wireguard.config"
     export CENTER_STAGE_DEFCONFIG="neon-perf_defconfig"
     # Defconfig common Settings
     if [[ "$MAIN_DEFCONFIG" == *"mi8937"* ]]; then

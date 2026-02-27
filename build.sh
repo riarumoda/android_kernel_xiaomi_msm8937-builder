@@ -127,6 +127,7 @@ compile_kernel() {
         $DEVICE_DEFCONFIG \
         $COMMON_DEFCONFIG \
         $FEATURE_DEFCONFIG
+    make O=out ARCH=arm64 olddefconfig
     make O=out ARCH=arm64 savedefconfig
     cp out/defconfig arch/arm64/configs/$CENTER_STAGE_DEFCONFIG
     rm -rf out

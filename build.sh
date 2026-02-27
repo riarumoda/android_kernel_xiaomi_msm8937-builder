@@ -29,7 +29,7 @@ setup_environment() {
     export DEVICE_DEFCONFIG="arch/arm64/configs/vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
     export COMPILE_MAIN_DEFCONFIG="vendor/$MAIN_DEFCONFIG_IMPORT"
     export COMPILE_DEVICE_DEFCONFIG="vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
-    export COMPILE_FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/exfat.config vendor/feature/lmkd.config vendor/feature/wireguard.config"
+    export COMPILE_FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/lineageos.config vendor/feature/lmkd.config vendor/feature/wireguard.config"
     # Defconfig common Settings
     if [[ "$COMPILE_MAIN_DEFCONFIG" == *"mi8937"* ]]; then
         export COMPILE_COMMON_DEFCONFIG="vendor/common.config vendor/debugfs.config vendor/msm-clk.config vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config"

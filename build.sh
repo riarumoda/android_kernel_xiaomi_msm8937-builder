@@ -106,7 +106,7 @@ compile_kernel() {
     git commit -m "cleanup: applied patches before build" &> /dev/null
     # Start compilation
     echo "Starting kernel compilation..."
-    make -s O=out ARCH=arm64 vendor/common.config $COMPILE_MAIN_DEFCONFIG vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config $COMPILE_DEVICE_DEFCONFIG vendor/feature/android-12.config vendor/feature/lineageos.config vendor/feature/lmkd.config vendor/qualcomm/msm8937/qrd.config &> /dev/null
+    make -s O=out ARCH=arm64 $COMPILE_MAIN_DEFCONFIG $COMPILE_DEVICE_DEFCONFIG vendor/common.config vendor/msm8937-legacy.config vendor/xiaomi/msm8937/common.config vendor/feature/android-12.config vendor/feature/lineageos.config vendor/feature/lmkd.config vendor/qualcomm/msm8937/qrd.config &> /dev/null
     make -j$(nproc --all) \
         O=out \
         ARCH=arm64 \

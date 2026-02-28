@@ -16,7 +16,7 @@ jobs:
       date: ${{ steps.ts.outputs.DATE }}
     strategy:
       matrix:
-        build-type: [ginkgo-legacy, ginkgo-current, laurel_sprout-legacy, laurel_sprout-current]
+        build-type: [mi89x7]
 
     steps:
       - uses: actions/checkout@v6
@@ -37,35 +37,24 @@ jobs:
             libc6 curl libstdc++6 git wget libssl-dev zstd \
             lld python3
 
-      - name: Preparing kernel sources (1/2)
+      - name: Preparing kernel sources
         run: |
-          if [ -d "$PWD/android_kernel_xiaomi_sm6125" ]; then
-            rm -rf android_kernel_xiaomi_sm6125
+          if [ -d "$PWD/android_kernel_xiaomi_msm8937" ]; then
+            rm -rf android_kernel_xiaomi_msm8937
           fi
-          if [[ "${{ matrix.build-type }}" == "ginkgo-legacy" ]]; then
-            git clone https://github.com/LineageOS/android_kernel_xiaomi_sm6125 --depth=1 -b lineage-22.2
-          elif [[ "${{ matrix.build-type }}" == "ginkgo-current" ]]; then
-            git clone https://github.com/LineageOS/android_kernel_xiaomi_sm6125 --depth=1 -b lineage-23.2
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-legacy" ]]; then
-            git clone https://github.com/LineageOS/android_kernel_xiaomi_sm6125 --depth=1 -b lineage-22.2
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-current" ]]; then
-            git clone https://github.com/LineageOS/android_kernel_xiaomi_sm6125 --depth=1 -b lineage-23.2
+          if [[ "${{ matrix.build-type }}" == "mi89x7" ]]; then
+            git clone https://github.com/LineageOS/android_kernel_xiaomi_msm8937 --depth=1 -b "lineage-23.2" android_kernel_xiaomi_msm8937
           fi
-          cp build.sh android_kernel_xiaomi_sm6125/
-          chmod +x ./android_kernel_xiaomi_sm6125/build.sh
+          cp build.sh android_kernel_xiaomi_msm8937/
+          cp defconfig android_kernel_xiaomi_msm8937/arch/arm64/configs/lineage-perf_defconfig
+          chmod +x ./android_kernel_xiaomi_msm8937/build.sh
 
       - name: Compile the kernel
         run: |
-          cd android_kernel_xiaomi_sm6125/
+          cd android_kernel_xiaomi_msm8937/
           echo "Starting to compile..."
-          if [[ "${{ matrix.build-type }}" == "ginkgo-legacy" ]]; then
-            ./build.sh trinket-perf_defconfig xiaomi-trinket.config ginkgo.config --ksu=KSU_NEXT
-          elif [[ "${{ matrix.build-type }}" == "ginkgo-current" ]]; then
-            ./build.sh trinket-perf_defconfig xiaomi-trinket.config ginkgo.config --ksu=KSU_NEXT
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-legacy" ]]; then
-            ./build.sh trinket-perf_defconfig xiaomi-trinket.config laurel_sprout.config --ksu=KSU_NEXT
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-current" ]]; then
-            ./build.sh trinket-perf_defconfig xiaomi-trinket.config laurel_sprout.config --ksu=KSU_NEXT
+          if [[ "${{ matrix.build-type }}" == "mi89x7" ]]; then
+            ./build.sh lineage-perf_defconfig --ksu=KSU_NONE
           fi
           cd ..
 
@@ -75,99 +64,13 @@ jobs:
             rm -rf AnyKernel3
           fi
           git clone https://github.com/riarumoda/AnyKernel3 AnyKernel3 --depth=1
-          cp android_kernel_xiaomi_sm6125/out/arch/arm64/boot/Image.gz AnyKernel3/
-          cp android_kernel_xiaomi_sm6125/out/arch/arm64/boot/dtb.img AnyKernel3/
-          cp android_kernel_xiaomi_sm6125/out/arch/arm64/boot/dtbo.img AnyKernel3/
-          if [[ "${{ matrix.build-type }}" == "ginkgo-legacy" ]]; then
-            sed -i 's/supported.versions=11-16/supported.versions=11-15/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=ginkgo/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=willow/' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/ginkgo willow (sm6125)/g' AnyKernel3/banner
-          elif [[ "${{ matrix.build-type }}" == "ginkgo-current" ]]; then
-            sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=ginkgo/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=willow/' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/ginkgo willow (sm6125)/g' AnyKernel3/banner
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-legacy" ]]; then
-            sed -i 's/supported.versions=11-16/supported.versions=11-15/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=laurel_sprout/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=laurel_sprout/' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/laurel_sprout (sm6125)/g' AnyKernel3/banner
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-current" ]]; then
-            sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=laurel_sprout/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=laurel_sprout/' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/laurel_sprout (sm6125)/g' AnyKernel3/banner
-          fi
-
-      - name: Pack kernel with AnyKernel3
-        run: |
-          ZIPNAME="perf-neon-${{ matrix.build-type }}-susfs-${{ steps.ts.outputs.DATE }}-${{ steps.ts.outputs.TIME }}.zip"
-          cd AnyKernel3
-          zip -rq9 "../$ZIPNAME" ./*
-          cd ..
-
-      - name: Preparing kernel sources (2/2)
-        run: |
-          if [ -d "$PWD/android_kernel_xiaomi_sm6125" ]; then
-            rm -rf android_kernel_xiaomi_sm6125
-          fi
-          if [[ "${{ matrix.build-type }}" == "ginkgo-legacy" ]]; then
-            git clone https://github.com/LineageOS/android_kernel_xiaomi_sm6125 --depth=1 -b lineage-22.2
-          elif [[ "${{ matrix.build-type }}" == "ginkgo-current" ]]; then
-            git clone https://github.com/LineageOS/android_kernel_xiaomi_sm6125 --depth=1 -b lineage-23.2
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-legacy" ]]; then
-            git clone https://github.com/LineageOS/android_kernel_xiaomi_sm6125 --depth=1 -b lineage-22.2
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-current" ]]; then
-            git clone https://github.com/LineageOS/android_kernel_xiaomi_sm6125 --depth=1 -b lineage-23.2
-          fi
-          cp build.sh android_kernel_xiaomi_sm6125/
-          chmod +x ./android_kernel_xiaomi_sm6125/build.sh
-
-      - name: Compile the kernel
-        run: |
-          cd android_kernel_xiaomi_sm6125/
-          echo "Starting to compile..."
-          if [[ "${{ matrix.build-type }}" == "ginkgo-legacy" ]]; then
-            ./build.sh trinket-perf_defconfig xiaomi-trinket.config ginkgo.config --ksu=NONE
-          elif [[ "${{ matrix.build-type }}" == "ginkgo-current" ]]; then
-            ./build.sh trinket-perf_defconfig xiaomi-trinket.config ginkgo.config --ksu=NONE
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-legacy" ]]; then
-            ./build.sh trinket-perf_defconfig xiaomi-trinket.config laurel_sprout.config --ksu=NONE
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-current" ]]; then
-            ./build.sh trinket-perf_defconfig xiaomi-trinket.config laurel_sprout.config --ksu=NONE
-          fi
-          cd ..
-
-      - name: Preparing AnyKernel3 sources
-        run: |
-          if [ -d "$PWD/AnyKernel3" ]; then
-            rm -rf AnyKernel3
-          fi
-          git clone https://github.com/riarumoda/AnyKernel3 AnyKernel3 --depth=1
-          cp android_kernel_xiaomi_sm6125/out/arch/arm64/boot/Image.gz AnyKernel3/
-          cp android_kernel_xiaomi_sm6125/out/arch/arm64/boot/dtb.img AnyKernel3/
-          cp android_kernel_xiaomi_sm6125/out/arch/arm64/boot/dtbo.img AnyKernel3/
-          if [[ "${{ matrix.build-type }}" == "ginkgo-legacy" ]]; then
-            sed -i 's/supported.versions=11-16/supported.versions=11-15/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=ginkgo/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=willow/' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/ginkgo willow (sm6125)/g' AnyKernel3/banner
-          elif [[ "${{ matrix.build-type }}" == "ginkgo-current" ]]; then
-            sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=ginkgo/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=willow/' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/ginkgo willow (sm6125)/g' AnyKernel3/banner
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-legacy" ]]; then
-            sed -i 's/supported.versions=11-16/supported.versions=11-15/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=laurel_sprout/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=laurel_sprout/' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/laurel_sprout (sm6125)/g' AnyKernel3/banner
-          elif [[ "${{ matrix.build-type }}" == "laurel_sprout-current" ]]; then
-            sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=laurel_sprout/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=laurel_sprout/' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/laurel_sprout (sm6125)/g' AnyKernel3/banner
+          cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
+          if [[ "${{ matrix.build-type }}" == "mi89x7" ]]; then
+            sed -i 's/supported.versions=11-16/supported.versions=12-16/' AnyKernel3/anykernel.sh
+            sed -i 's/device.name1=sweet/device.name1=mi8937/' AnyKernel3/anykernel.sh
+            sed -i 's/device.name2=sweetin/device.name2=mi8917/' AnyKernel3/anykernel.sh
+            sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=ugg' AnyKernel3/anykernel.sh
+            sed -i 's/sweet (sm6150)/mi8937 and mi8917 (msm8937)/g' AnyKernel3/banner
           fi
 
       - name: Pack kernel with AnyKernel3
@@ -216,16 +119,12 @@ jobs:
           prerelease: true
           body: |
             > [!NOTE]   
-            > - The current builds support Android 11 to 16, meanwhile legacy builds support Android 11 to 15.
-            > - This build have KernelSU integration with KernelSU-NEXT + SUSFS 2.0.0.   
-            > - KernelSU latest manager for KernelSU-NEXT can be found in [here](https://t.me/ksunext_ci).     
-            > - Pick the nothing build if you don't want KernelSU built-in into the kernel.
+            > - This build support Android 12 to 16.
+            > - This build have No KernelSU integration at all.    
                
-            > [!CAUTION]    
-            > - Always backup your boot & dtbo image first before proceeding!   
+            > [!CAUTION]   
+            > - Always backup your boot image first before proceeding!   
+            > - Dont forget to flash Appender if you are on locked bootloader!    
           files: |
-            artifacts/ginkgo-legacy/*.zip
-            artifacts/ginkgo-current/*.zip
-            artifacts/laurel_sprout-legacy/*.zip
-            artifacts/laurel_sprout-current/*.zip
+            artifacts/mi89x7/*.zip
           overwrite_files: true

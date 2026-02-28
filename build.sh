@@ -67,6 +67,7 @@ setup_toolchain() {
 
 # Add patches function
 add_patches() {
+    echo "Nothing added."
     # Enable config mismatch
     # echo "CONFIG_DEBUG_SECTION_MISMATCH=y" >> $MAIN_DEFCONFIG
 }

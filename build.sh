@@ -9,8 +9,7 @@ setup_environment() {
     echo "Setting up build environment..."
     # Imports
     local MAIN_DEFCONFIG_IMPORT="$1"
-    local DEVICE_DEFCONFIG_IMPORT="$2"
-    local KERNELSU_SELECTOR="$3"
+    local KERNELSU_SELECTOR="$2"
     # Maintainer info
     export KBUILD_BUILD_USER=riaru-compile
     export KBUILD_BUILD_HOST=riaru.com
@@ -25,16 +24,8 @@ setup_environment() {
     export GCC32_DIR=$PWD/gcc32
     export PATH="$CLANG_DIR/bin/:$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH"
     # Defconfig Settings
-    export MAIN_DEFCONFIG="arch/arm64/configs/vendor/$MAIN_DEFCONFIG_IMPORT"
-    export DEVICE_DEFCONFIG="arch/arm64/configs/vendor/xiaomi/$DEVICE_DEFCONFIG_IMPORT"
-    export FEATURE_DEFCONFIG="arch/arm64/configs/vendor/feature/android-12.config arch/arm64/configs/vendor/feature/erofs.config arch/arm64/configs/vendor/feature/lineageos.config arch/arm64/configs/vendor/feature/lmkd.config arch/arm64/configs/vendor/feature/lto.config arch/arm64/configs/vendor/feature/wireguard.config"
-    export CENTER_STAGE_DEFCONFIG="neon-perf_defconfig"
-    # Defconfig common Settings
-    if [[ "$MAIN_DEFCONFIG" == *"mi8937"* ]]; then
-        export COMMON_DEFCONFIG="arch/arm64/configs/vendor/common.config arch/arm64/configs/vendor/debugfs.config arch/arm64/configs/vendor/msm-clk.config arch/arm64/configs/vendor/msm8937-legacy.config arch/arm64/configs/vendor/xiaomi/msm8937/common.config"
-    else
-        export COMMON_DEFCONFIG="arch/arm64/configs/vendor/common.config arch/arm64/configs/vendor/debugfs.config arch/arm64/configs/vendor/msm-clk.config"
-    fi
+    export MAIN_DEFCONFIG="arch/arm64/configs/$MAIN_DEFCONFIG_IMPORT"
+    export COMPILE_MAIN_DEFCONFIG="$MAIN_DEFCONFIG_IMPORT"
     # KernelSU Settings
     if [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_BLXX" ]]; then
         export KSU_SETUP_URI="https://github.com/backslashxx/KernelSU/raw/refs/heads/master/kernel/setup.sh"
@@ -76,23 +67,6 @@ setup_toolchain() {
 
 # Add patches function
 add_patches() {
-    # Apply general config patches
-    echo "Tuning the rest of default configs..."
-    sed -i 's/# CONFIG_PID_NS is not set/CONFIG_PID_NS=y/' $MAIN_DEFCONFIG
-    sed -i 's/CONFIG_HZ_100=y/CONFIG_HZ_250=y/' $MAIN_DEFCONFIG
-    echo "CONFIG_POSIX_MQUEUE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_SYSVIPC=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_CGROUP_DEVICE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_DEVTMPFS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_IPC_NS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_DEVTMPFS_MOUNT=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE_STATS=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_FSCACHE_HISTOGRAM=y" >> $MAIN_DEFCONFIG
-    echo "CONFIG_SECURITY_SELINUX_DEVELOP=y" >> $MAIN_DEFCONFIG
-    # Make image smaller by disabling kallsyms
-    echo "CONFIG_KALLSYMS=n" >> $MAIN_DEFCONFIG
-    echo "CONFIG_KALLSYMS_ALL=n" >> $MAIN_DEFCONFIG
     # Enable config mismatch
     # echo "CONFIG_DEBUG_SECTION_MISMATCH=y" >> $MAIN_DEFCONFIG
 }
@@ -121,51 +95,6 @@ add_ksu() {
 
 # Compile kernel function
 compile_kernel() {
-    # Merge all of the configs into one defconfig
-    echo "Merging defconfigs..."
-    mkdir -p out
-    ARCH=arm64 ./scripts/kconfig/merge_config.sh -O out/ -m \
-        $MAIN_DEFCONFIG \
-        $COMMON_DEFCONFIG \
-        $DEVICE_DEFCONFIG \
-        $FEATURE_DEFCONFIG
-    make -j$(nproc --all) \
-        O=out \
-        ARCH=arm64 \
-        LLVM=1 \
-        LLVM_IAS=1 \
-        CC=clang \
-        LD=ld.lld \
-        AR=llvm-ar \
-        AS=llvm-as \
-        NM=llvm-nm \
-        OBJCOPY=llvm-objcopy \
-        OBJDUMP=llvm-objdump \
-        STRIP=llvm-strip \
-        CROSS_COMPILE=aarch64-linux-android- \
-        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-        CLANG_TRIPLE=aarch64-linux-gnu- \
-        olddefconfig
-    make -j$(nproc --all) \
-        O=out \
-        ARCH=arm64 \
-        LLVM=1 \
-        LLVM_IAS=1 \
-        CC=clang \
-        LD=ld.lld \
-        AR=llvm-ar \
-        AS=llvm-as \
-        NM=llvm-nm \
-        OBJCOPY=llvm-objcopy \
-        OBJDUMP=llvm-objdump \
-        STRIP=llvm-strip \
-        CROSS_COMPILE=aarch64-linux-android- \
-        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-        CLANG_TRIPLE=aarch64-linux-gnu- \
-        savedefconfig
-    cp out/defconfig arch/arm64/configs/$CENTER_STAGE_DEFCONFIG
-    rm -rf out
-    mkdir -p out
     # Do a git cleanup before compiling
     echo "Cleaning up git before compiling..."
     git config user.email $GIT_EMAIL
@@ -175,7 +104,7 @@ compile_kernel() {
     git commit -m "cleanup: applied patches before build" &> /dev/null
     # Start compilation
     echo "Starting kernel compilation..."
-    make -s O=out ARCH=arm64 $CENTER_STAGE_DEFCONFIG &> /dev/null
+    make -s O=out ARCH=arm64 $COMPILE_MAIN_DEFCONFIG &> /dev/null
     make -j$(nproc --all) \
         O=out \
         ARCH=arm64 \
@@ -191,28 +120,23 @@ compile_kernel() {
         STRIP=llvm-strip \
         CROSS_COMPILE=aarch64-linux-android- \
         CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-        CLANG_TRIPLE=aarch64-linux-gnu- \
-        Image.gz dtbs Image.gz-dtb
+        CLANG_TRIPLE=aarch64-linux-gnu- 
 }
 
 # Main function
 main() {
     # Check if all four arguments are valid
     echo "Validating input arguments..."
-    if [ $# -ne 3 ]; then
-        echo "Usage: $0 <MAIN_DEFCONFIG_IMPORT> <DEVICE_DEFCONFIG_IMPORT> <KERNELSU_SELECTOR>"
-        echo "Example: $0 msm8937-perf_defconfig msm8937/mi8937.config --ksu=KSU_BLXX"
+    if [ $# -ne 2 ]; then
+        echo "Usage: $0 <MAIN_DEFCONFIG_IMPORT> <KERNELSU_SELECTOR>"
+        echo "Example: $0 lineage-perf_defconfig --ksu=KSU_BLXX"
         exit 1
     fi
-    if [ ! -f "arch/arm64/configs/vendor/$1" ]; then
+    if [ ! -f "arch/arm64/configs/$1" ]; then
         echo "Error: MAIN_DEFCONFIG_IMPORT '$1' does not exist."
         exit 1
     fi
-    if [ ! -f "arch/arm64/configs/vendor/xiaomi/$2" ]; then
-        echo "Error: DEVICE_DEFCONFIG_IMPORT '$2' does not exist."
-        exit 1
-    fi
-    setup_environment "$1" "$2" "$3"
+    setup_environment "$1" "$2"
     setup_toolchain
     add_patches
     add_ksu
@@ -220,4 +144,4 @@ main() {
 }
 
 # Run the main function
-main "$1" "$2" "$3"
+main "$1" "$2"

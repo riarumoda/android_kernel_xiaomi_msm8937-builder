@@ -14,7 +14,7 @@ jobs:
       date: ${{ steps.ts.outputs.DATE }}
     strategy:
       matrix:
-        build-type: [mi8937]
+        build-type: [mi89x7]
 
     steps:
       - uses: actions/checkout@v6
@@ -40,9 +40,7 @@ jobs:
           if [ -d "$PWD/android_kernel_xiaomi_msm8937" ]; then
             rm -rf android_kernel_xiaomi_msm8937
           fi
-          if [[ "${{ matrix.build-type }}" == "mi8937" ]]; then
-            git clone https://github.com/LineageOS/android_kernel_xiaomi_msm8937 --depth=1 -b "lineage-23.2" android_kernel_xiaomi_msm8937
-          elif [[ "${{ matrix.build-type }}" == "mi8917" ]]; then
+          if [[ "${{ matrix.build-type }}" == "mi89x7" ]]; then
             git clone https://github.com/LineageOS/android_kernel_xiaomi_msm8937 --depth=1 -b "lineage-23.2" android_kernel_xiaomi_msm8937
           fi
           cp build.sh android_kernel_xiaomi_msm8937/
@@ -53,9 +51,7 @@ jobs:
         run: |
           cd android_kernel_xiaomi_msm8937/
           echo "Starting to compile..."
-          if [[ "${{ matrix.build-type }}" == "mi8937" ]]; then
-            ./build.sh lineage-perf_defconfig --ksu=KSU_BLXX
-          elif [[ "${{ matrix.build-type }}" == "mi8917" ]]; then
+          if [[ "${{ matrix.build-type }}" == "mi89x7" ]]; then
             ./build.sh lineage-perf_defconfig --ksu=KSU_BLXX
           fi
           cd ..
@@ -68,18 +64,12 @@ jobs:
           fi
           git clone https://github.com/riarumoda/AnyKernel3 AnyKernel3 --depth=1
           cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
-          if [[ "${{ matrix.build-type }}" == "mi8937" ]]; then
+          if [[ "${{ matrix.build-type }}" == "mi89x7" ]]; then
             sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
             sed -i 's/device.name1=sweet/device.name1=mi8937/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=santoni/' AnyKernel3/anykernel.sh
-            sed -i '/device.name2=santoni/a device.name3=land\ndevice.name4=ugg' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/mi8937 (msm8937)/g' AnyKernel3/banner
-          elif [[ "${{ matrix.build-type }}" == "mi8917" ]]; then
-            sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=mi8917/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=rolex/' AnyKernel3/anykernel.sh
-            sed -i '/device.name2=rolex/a device.name3=riva\ndevice.name4=ugglite' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/mi8917 (msm8917)/g' AnyKernel3/banner
+            sed -i 's/device.name2=sweetin/device.name2=mi8917/' AnyKernel3/anykernel.sh
+            sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=ugg' AnyKernel3/anykernel.sh
+            sed -i 's/sweet (sm6150)/mi8937 and mi8917 (msm8937)/g' AnyKernel3/banner
           fi
 
       - name: Pack & upload artifacts (All builds)

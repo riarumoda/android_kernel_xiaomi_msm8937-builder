@@ -46,6 +46,7 @@ jobs:
             git clone https://github.com/LineageOS/android_kernel_xiaomi_msm8937 --depth=1 -b "lineage-23.2" android_kernel_xiaomi_msm8937
           fi
           cp build.sh android_kernel_xiaomi_msm8937/
+          cp defconfig android_kernel_xiaomi_msm8937/arch/arm64/configs/lineage-perf_defconfig
           chmod +x ./android_kernel_xiaomi_msm8937/build.sh
 
       - name: Compile the kernel
@@ -53,9 +54,9 @@ jobs:
           cd android_kernel_xiaomi_msm8937/
           echo "Starting to compile..."
           if [[ "${{ matrix.build-type }}" == "mi8937" ]]; then
-            ./build.sh msm8937-perf_defconfig msm8937/mi8937_exclude_mi8917.config --ksu=KSU_BLXX
+            ./build.sh lineage-perf_defconfig --ksu=KSU_BLXX
           elif [[ "${{ matrix.build-type }}" == "mi8917" ]]; then
-            ./build.sh msm8937-perf_defconfig msm8937/mi8917.config --ksu=KSU_BLXX
+            ./build.sh lineage-perf_defconfig --ksu=KSU_BLXX
           fi
           cd ..
           ls -la android_kernel_xiaomi_msm8937/out/arch/arm64/boot/

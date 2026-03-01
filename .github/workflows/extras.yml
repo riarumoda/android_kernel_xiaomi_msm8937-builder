@@ -37,7 +37,7 @@ jobs:
             libc6 curl libstdc++6 git wget libssl-dev zstd \
             lld python3
 
-      - name: Preparing kernel sources
+      - name: Preparing kernel sources (1/2)
         run: |
           if [ -d "$PWD/android_kernel_xiaomi_msm8937" ]; then
             rm -rf android_kernel_xiaomi_msm8937
@@ -76,6 +76,49 @@ jobs:
       - name: Pack kernel with AnyKernel3
         run: |
           ZIPNAME="perf-neon-${{ matrix.build-type }}-nothing-${{ steps.ts.outputs.DATE }}-${{ steps.ts.outputs.TIME }}.zip"
+          cd AnyKernel3
+          zip -rq9 "../$ZIPNAME" ./*
+          cd ..
+
+      - name: Preparing kernel sources (2/2)
+        run: |
+          if [ -d "$PWD/android_kernel_xiaomi_msm8937" ]; then
+            rm -rf android_kernel_xiaomi_msm8937
+          fi
+          if [[ "${{ matrix.build-type }}" == "mi89x7" ]]; then
+            git clone https://github.com/LineageOS/android_kernel_xiaomi_msm8937 --depth=1 -b "lineage-23.2" android_kernel_xiaomi_msm8937
+          fi
+          cp build.sh android_kernel_xiaomi_msm8937/
+          cp defconfig android_kernel_xiaomi_msm8937/arch/arm64/configs/lineage-perf_defconfig
+          chmod +x ./android_kernel_xiaomi_msm8937/build.sh
+
+      - name: Compile the kernel
+        run: |
+          cd android_kernel_xiaomi_msm8937/
+          echo "Starting to compile..."
+          if [[ "${{ matrix.build-type }}" == "mi89x7" ]]; then
+            ./build.sh lineage-perf_defconfig --ksu=KSU_NEXT
+          fi
+          cd ..
+
+      - name: Preparing AnyKernel3 sources
+        run: |
+          if [ -d "$PWD/AnyKernel3" ]; then
+            rm -rf AnyKernel3
+          fi
+          git clone https://github.com/riarumoda/AnyKernel3 AnyKernel3 --depth=1
+          cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
+          if [[ "${{ matrix.build-type }}" == "mi89x7" ]]; then
+            sed -i 's/supported.versions=11-16/supported.versions=12-16/' AnyKernel3/anykernel.sh
+            sed -i 's/device.name1=sweet/device.name1=mi8937/' AnyKernel3/anykernel.sh
+            sed -i 's/device.name2=sweetin/device.name2=mi8917/' AnyKernel3/anykernel.sh
+            sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=ugg' AnyKernel3/anykernel.sh
+            sed -i 's/sweet (sm6150)/mi8937 and mi8917 (msm8937)/g' AnyKernel3/banner
+          fi
+
+      - name: Pack kernel with AnyKernel3
+        run: |
+          ZIPNAME="perf-neon-${{ matrix.build-type }}-ksunext-${{ steps.ts.outputs.DATE }}-${{ steps.ts.outputs.TIME }}.zip"
           cd AnyKernel3
           zip -rq9 "../$ZIPNAME" ./*
           cd ..
@@ -120,7 +163,8 @@ jobs:
           body: |
             > [!NOTE]   
             > - This build support Android 12 to 16.
-            > - This build have No KernelSU integration at all.    
+            > - This build have KernelSU NEXT integration.    
+            > - Use the nothing build if you don't want anything related to KernelSU.
                
             > [!CAUTION]   
             > - Always backup your boot image first before proceeding!   

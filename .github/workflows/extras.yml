@@ -163,7 +163,8 @@ jobs:
           body: |
             > [!NOTE]   
             > - This build support Android 12 to 16.
-            > - This build have KernelSU NEXT integration.    
+            > - This build have KernelSU-NEXT integration.    
+            > - KernelSU latest manager for KernelSU-NEXT can be found in [here](https://t.me/ksunext_ci).     
             > - Use the nothing build if you don't want anything related to KernelSU.
                
             > [!CAUTION]   

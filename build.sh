@@ -30,17 +30,24 @@ setup_environment() {
     if [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_BLXX" ]]; then
         export KSU_SETUP_URI="https://github.com/backslashxx/KernelSU/raw/refs/heads/master/kernel/setup.sh"
         export KSU_BRANCH="master"
-        export KSU_GENERAL_PATCH="https://github.com/ximi-mojito-test/mojito_krenol/commit/ebc23ea38f787745590c96035cb83cd11eb6b0e7.patch"
+        export KSU_GENERAL_PATCH="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/b36f9ca5af57b1c95cdb65eceaba93a9c69c9665.patch"
+    elif [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_NEXT" ]]; then
+        export KSU_SETUP_URI="https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh"
+        export KSU_BRANCH="legacy"
+        export KSU_GENERAL_PATCH="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/b36f9ca5af57b1c95cdb65eceaba93a9c69c9665.patch"
     elif [[ "$KERNELSU_SELECTOR" == "--ksu=NONE" ]]; then
         export KSU_SETUP_URI=""
         export KSU_BRANCH=""
         export KSU_GENERAL_PATCH=""
     else
-        echo "Invalid KernelSU selector. Use --ksu=KSU_BLXX, or --ksu=NONE."
+        echo "Invalid KernelSU selector. Use --ksu=KSU_BLXX, --ksu=KSU_NEXT, or --ksu=NONE."
         exit 1
     fi
     # KernelSU umount patch
-    export KSU_UMOUNT_PATCH="https://github.com/tbyool/android_kernel_xiaomi_sm6150/commit/64db0dfa2f8aa6c519dbf21eb65c9b89643cda3d.patch"
+    export KSU_UMOUNT_PATCH="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/d6c848e0891c9d25ff747c11027c205ac788db46.patch"
+    # TheSillyOk's Exports
+    export SILLY_SUSFS_PATCH="https://github.com/TheSillyOk/kernel_ls_patches/raw/refs/heads/master/susfs-2.0.0.patch"
+    export SILLY_KSUN_SUSFS_PATCH="https://github.com/TheSillyOk/kernel_ls_patches/raw/refs/heads/master/KSUN/KSUN-SUSFS-2.0.0.patch"
 }
 
 # Setup toolchain function
@@ -90,6 +97,39 @@ add_ksu() {
             # Manual Config Enablement
             echo "CONFIG_KSU=y" >> $MAIN_DEFCONFIG
             echo "CONFIG_KSU_TAMPER_SYSCALL_TABLE=y" >> $MAIN_DEFCONFIG
+        elif [[ "$KSU_SETUP_URI" == *"KernelSU-Next/KernelSU-Next"* ]]; then
+            # Apply manual hook
+            wget -qO- $KSU_GENERAL_PATCH | patch -s -p1
+            # Run Setup Script
+            curl -LSs $KSU_SETUP_URI | bash -s $KSU_BRANCH
+            # Manual Config Enablement
+            echo "CONFIG_KSU=y" >> $MAIN_DEFCONFIG
+            echo "KSU_MANUAL_HOOK=y" >> $MAIN_DEFCONFIG
+            # Apply susfs patches
+            echo "Applying SUSFS patches..."
+            wget -qO- $SILLY_SUSFS_PATCH | patch -s -p1 --fuzz=5
+            # Apply ksu susfs patches
+            cd KernelSU-Next
+            wget -qO- $SILLY_KSUN_SUSFS_PATCH | patch -s -p1
+            git config user.email $GIT_EMAIL
+            git config user.name $GIT_NAME
+            git config set advice.addEmbeddedRepo true
+            git add .
+            git commit -m "cleanup: applied patches before build" &> /dev/null
+            cd ..
+            # Enable susfs configs
+            echo "CONFIG_KSU_SUSFS=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_MAP=y" >> $MAIN_DEFCONFIG
+            # Disable custom susfs configs
+            echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=n" >> $MAIN_DEFCONFIG
         fi
     else
         echo "No KernelSU to set up."

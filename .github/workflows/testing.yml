@@ -63,7 +63,6 @@ jobs:
             git clone https://github.com/Mi-Thorium/vendor_qcom_opensource_wlan_prima --depth=1 -b "wlan/LA.UM.9.6.4/mithorium/master" android_kernel_xiaomi_msm8937/drivers/staging/prima
           fi
           cp build.sh android_kernel_xiaomi_msm8937/
-          cp community-defconfig android_kernel_xiaomi_msm8937/arch/arm64/configs/lineage-perf_defconfig
           chmod +x ./android_kernel_xiaomi_msm8937/build.sh
 
       - name: Compile the kernel
@@ -71,7 +70,7 @@ jobs:
           cd android_kernel_xiaomi_msm8937/
           echo "Starting to compile..."
           if [[ "${{ matrix.build-type }}" == "mi89x7" ]]; then
-            ./build.sh lineage-perf_defconfig --ksu=KSU_BLXX
+            ./build.sh mi8937 --ksu=KSU_BLXX
           fi
           cd ..
           ls -la android_kernel_xiaomi_msm8937/out/arch/arm64/boot/

@@ -32,6 +32,14 @@ setup_environment() {
         export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config"
         export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config"
         export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config"
+    elif [[ "$DEVICE_IMPORT" == "mi89x7-a11" ]]; then
+        # Editable defconfig
+        export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
+        # Do not use for edit
+        export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
+        export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config"
+        export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config"
+        export FEATURE_DEFCONFIG="vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config"
     else
         echo "Invalid MAIN_DEFCONFIG_IMPORT. Use a valid defconfig filename from arch/arm64/configs/vendor/ directory."
         exit 1

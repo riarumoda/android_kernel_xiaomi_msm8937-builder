@@ -133,7 +133,7 @@ compile_kernel() {
     git commit -m "cleanup: applied patches before build" &> /dev/null
     # Start compilation
     echo "Starting kernel compilation..."
-    make -s O=out ARCH=arm64 "$ACTUAL_MAIN_DEFCONFIG $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG" &> /dev/null
+    make -s O=out ARCH=arm64 $ACTUAL_MAIN_DEFCONFIG $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG &> /dev/null
     make -j$(nproc --all) \
         O=out \
         ARCH=arm64 \

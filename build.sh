@@ -54,7 +54,9 @@ setup_environment() {
         exit 1
     fi
     # KernelSU umount patch
-    export KSU_UMOUNT_PATCH="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/d6c848e0891c9d25ff747c11027c205ac788db46.patch"
+    export KSU_UMOUNT_PATCH1="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/d4f134b40e4091c793a316bfe2c72cd5f0589945.patch"
+    export KSU_UMOUNT_PATCH2="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/362a38a16ddf949732efe779cbceb09cae32c999.patch"
+    export KSU_UMOUNT_PATCH3="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/a1de1045bd5f7528040ea0c8941ec15713fd8d80.patch"
 }
 
 # Setup toolchain function
@@ -92,7 +94,9 @@ add_ksu() {
     if [ -n "$KSU_SETUP_URI" ]; then
         echo "Setting up KernelSU..."
         # Apply umount backport and kpatch fixes
-        wget -qO- $KSU_UMOUNT_PATCH | patch -s -p1
+        wget -qO- $KSU_UMOUNT_PATCH1 | patch -s -p1
+        wget -qO- $KSU_UMOUNT_PATCH2 | patch -s -p1
+        wget -qO- $KSU_UMOUNT_PATCH3 | patch -s -p1
         if [[ "$KSU_SETUP_URI" == *"backslashxx/KernelSU"* ]]; then
             # Apply manual hook
             # disable for now, we're gonna use hookless mode
@@ -129,7 +133,7 @@ compile_kernel() {
     git commit -m "cleanup: applied patches before build" &> /dev/null
     # Start compilation
     echo "Starting kernel compilation..."
-    make -s O=out ARCH=arm64 $ACTUAL_MAIN_DEFCONFIG $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG &> /dev/null
+    make -s O=out ARCH=arm64 "$ACTUAL_MAIN_DEFCONFIG $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG" &> /dev/null
     make -j$(nproc --all) \
         O=out \
         ARCH=arm64 \

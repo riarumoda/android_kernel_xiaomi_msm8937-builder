@@ -142,6 +142,7 @@ compile_kernel() {
         fi
     done
     yes "" | make O=out ARCH=arm64 olddefconfig
+    yes "" | make O=out ARCH=arm64 syncconfig
     # Do a git cleanup before compiling
     echo "Cleaning up git before compiling..."
     git config user.email $GIT_EMAIL

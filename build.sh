@@ -133,7 +133,7 @@ compile_kernel() {
     cd arch/arm64/configs
     local CONFIG_LIST="$ACTUAL_MAIN_DEFCONFIG $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG"
     mkdir -p ../../../out
-    ARCH=arm64 ./scripts/kconfig/merge_config.sh -O ../../../out/ $CONFIG_LIST
+    ARCH=arm64 ../../../scripts/kconfig/merge_config.sh -O ../../../out/ $CONFIG_LIST
     cd ../../../
     make O=out ARCH=arm64 olddefconfig
     # Do a git cleanup before compiling

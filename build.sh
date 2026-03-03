@@ -8,7 +8,7 @@
 setup_environment() {
     echo "Setting up build environment..."
     # Imports
-    local MAIN_DEFCONFIG_IMPORT="$1"
+    local DEVICE_IMPORT="$1"
     local KERNELSU_SELECTOR="$2"
     # Maintainer info
     export KBUILD_BUILD_USER=riaru-compile
@@ -23,9 +23,19 @@ setup_environment() {
     export GCC64_DIR=$PWD/gcc64
     export GCC32_DIR=$PWD/gcc32
     export PATH="$CLANG_DIR/bin/:$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH"
-    # Defconfig Settings
-    export MAIN_DEFCONFIG="arch/arm64/configs/$MAIN_DEFCONFIG_IMPORT"
-    export COMPILE_MAIN_DEFCONFIG="$MAIN_DEFCONFIG_IMPORT"
+    # Defconfig Settings - v2
+    if [[ "$DEVICE_IMPORT" == "mi89x7" ]]; then
+        # Editable defconfig
+        export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
+        # Do not use for edit
+        export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
+        export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config"
+        export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config"
+        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config"
+    else
+        echo "Invalid MAIN_DEFCONFIG_IMPORT. Use a valid defconfig filename from arch/arm64/configs/vendor/ directory."
+        exit 1
+    fi
     # KernelSU Settings
     if [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_BLXX" ]]; then
         export KSU_SETUP_URI="https://github.com/backslashxx/KernelSU/raw/refs/heads/master/kernel/setup.sh"
@@ -119,7 +129,7 @@ compile_kernel() {
     git commit -m "cleanup: applied patches before build" &> /dev/null
     # Start compilation
     echo "Starting kernel compilation..."
-    make -s O=out ARCH=arm64 $COMPILE_MAIN_DEFCONFIG &> /dev/null
+    make -s O=out ARCH=arm64 $ACTUAL_MAIN_DEFCONFIG $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG &> /dev/null
     make -j$(nproc --all) \
         O=out \
         ARCH=arm64 \
@@ -143,12 +153,8 @@ main() {
     # Check if all four arguments are valid
     echo "Validating input arguments..."
     if [ $# -ne 2 ]; then
-        echo "Usage: $0 <MAIN_DEFCONFIG_IMPORT> <KERNELSU_SELECTOR>"
-        echo "Example: $0 lineage-perf_defconfig --ksu=KSU_BLXX"
-        exit 1
-    fi
-    if [ ! -f "arch/arm64/configs/$1" ]; then
-        echo "Error: MAIN_DEFCONFIG_IMPORT '$1' does not exist."
+        echo "Usage: $0 <DEVICE_IMPORT> <KERNELSU_SELECTOR>"
+        echo "Example: $0 mi89x7 --ksu=KSU_BLXX"
         exit 1
     fi
     setup_environment "$1" "$2"

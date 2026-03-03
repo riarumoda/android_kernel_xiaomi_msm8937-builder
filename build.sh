@@ -92,7 +92,8 @@ add_ksu() {
     if [ -n "$KSU_SETUP_URI" ]; then
         echo "Setting up KernelSU..."
         # Apply umount backport and kpatch fixes
-        wget -qO- $KSU_UMOUNT_PATCH | patch -s -p1
+        # disable for now, its already on the sources
+        # wget -qO- $KSU_UMOUNT_PATCH | patch -s -p1
         if [[ "$KSU_SETUP_URI" == *"backslashxx/KernelSU"* ]]; then
             # Apply manual hook
             # disable for now, we're gonna use hookless mode

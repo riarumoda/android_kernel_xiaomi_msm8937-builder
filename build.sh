@@ -31,7 +31,7 @@ setup_environment() {
         export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
         export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config vendor/msm-clk.config"
         export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config"
-        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config"
+        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lto.config"
     elif [[ "$DEVICE_IMPORT" == "mi89x7-a11" ]]; then
         # Editable defconfig
         export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
@@ -39,7 +39,7 @@ setup_environment() {
         export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
         export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config vendor/msm-clk.config"
         export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config"
-        export FEATURE_DEFCONFIG="vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config"
+        export FEATURE_DEFCONFIG="vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lto.config"
     else
         echo "Invalid MAIN_DEFCONFIG_IMPORT. Use a valid defconfig filename from arch/arm64/configs/vendor/ directory."
         exit 1
@@ -141,7 +141,7 @@ compile_kernel() {
             echo "Warning: Fragment arch/arm64/configs/$fragment not found!"
         fi
     done
-    make O=out ARCH=arm64 olddefconfig
+    yes "" | make O=out ARCH=arm64 olddefconfig
     # Do a git cleanup before compiling
     echo "Cleaning up git before compiling..."
     git config user.email $GIT_EMAIL

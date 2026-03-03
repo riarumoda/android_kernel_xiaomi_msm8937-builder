@@ -55,7 +55,7 @@ setup_environment() {
         export KSU_GENERAL_PATCH="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/49f07744f13de12606b1d4ebc5eeac60b19c97e4.patch"
     elif [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_NEXT" ]]; then
         export KSU_SETUP_URI="https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh"
-        export KSU_BRANCH="legacy"
+        export KSU_BRANCH="legacy_susfs"
         export KSU_GENERAL_PATCH="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/49f07744f13de12606b1d4ebc5eeac60b19c97e4.patch"
     elif [[ "$KERNELSU_SELECTOR" == "--ksu=NONE" ]]; then
         export KSU_SETUP_URI=""
@@ -67,6 +67,8 @@ setup_environment() {
     fi
     # KernelSU umount patch
     export KSU_UMOUNT_PATCH="https://github.com/tbyool/android_kernel_xiaomi_sm6150/commit/64db0dfa2f8aa6c519dbf21eb65c9b89643cda3d.patch"
+    # JackA1ltman Patches
+    export JACK_SUSFS_PATCH="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/raw/refs/heads/mainline/Patches/Patch/susfs_patch_to_4.19.patch"
 }
 
 # Setup toolchain function
@@ -121,7 +123,22 @@ add_ksu() {
             curl -LSs $KSU_SETUP_URI | bash -s $KSU_BRANCH
             # Manual Config Enablement
             echo "CONFIG_KSU=y" >> $MAIN_DEFCONFIG
-            echo "KSU_KPROBES_HOOK=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_KPROBES_HOOK=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_HAVE_SYSCALL_TRACEPOINTS=y" >> $MAIN_DEFCONFIG
+            # Apply SUSFS patches
+            wget -qO- $JACK_SUSFS_PATCH | patch -s -p1
+            # Manual Config Enablement for SUSFS
+            echo "CONFIG_KSU_SUSFS=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_MOUNT=n" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_MAP=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=n" >> $MAIN_DEFCONFIG
         fi
     else
         echo "No KernelSU to set up."

@@ -131,6 +131,7 @@ add_ksu() {
 compile_kernel() {
     # Merge defconfig
     local CONFIG_LIST="$ACTUAL_MAIN_DEFCONFIG $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG"
+    mkdir -p out
     ARCH=arm64 ./scripts/kconfig/merge_config.sh -O out/ $CONFIG_LIST
     make O=out ARCH=arm64 olddefconfig
     # Do a git cleanup before compiling

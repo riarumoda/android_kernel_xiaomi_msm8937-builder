@@ -130,11 +130,17 @@ add_ksu() {
 # Compile kernel function
 compile_kernel() {
     # Merge defconfig
-    cd arch/arm64/configs
-    local CONFIG_LIST="$ACTUAL_MAIN_DEFCONFIG $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG"
-    mkdir -p ../../../out
-    ARCH=arm64 ../../../scripts/kconfig/merge_config.sh -O ../../../out/ $CONFIG_LIST
-    cd ../../../
+    mkdir -p out
+    make O=out ARCH=arm64 $ACTUAL_MAIN_DEFCONFIG
+    echo "Appending fragments to .config..."
+    for fragment in $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG; do
+        if [ -f "arch/arm64/configs/$fragment" ]; then
+            echo "Merging $fragment..."
+            cat "arch/arm64/configs/$fragment" >> out/.config
+        else
+            echo "Warning: Fragment arch/arm64/configs/$fragment not found!"
+        fi
+    done
     make O=out ARCH=arm64 olddefconfig
     # Do a git cleanup before compiling
     echo "Cleaning up git before compiling..."

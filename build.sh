@@ -129,6 +129,10 @@ add_ksu() {
 
 # Compile kernel function
 compile_kernel() {
+    # Merge defconfig
+    local CONFIG_LIST="$ACTUAL_MAIN_DEFCONFIG $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG"
+    ARCH=arm64 ./scripts/kconfig/merge_config.sh -O out/ $CONFIG_LIST
+    make O=out ARCH=arm64 olddefconfig
     # Do a git cleanup before compiling
     echo "Cleaning up git before compiling..."
     git config user.email $GIT_EMAIL
@@ -138,7 +142,6 @@ compile_kernel() {
     git commit -m "cleanup: applied patches before build" &> /dev/null
     # Start compilation
     echo "Starting kernel compilation..."
-    make -s O=out ARCH=arm64 $ACTUAL_MAIN_DEFCONFIG $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG &> /dev/null
     make -j$(nproc --all) \
         O=out \
         ARCH=arm64 \

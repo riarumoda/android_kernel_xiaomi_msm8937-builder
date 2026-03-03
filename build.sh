@@ -24,22 +24,26 @@ setup_environment() {
     export GCC32_DIR=$PWD/gcc32
     export PATH="$CLANG_DIR/bin/:$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH"
     # Defconfig Settings - v2
-    if [[ "$DEVICE_IMPORT" == "mi89x7" ]]; then
+    if [[ "$DEVICE_IMPORT" == "mi89x7-community" ]]; then
         # Editable defconfig
         export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
         # Do not use for edit
         export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
         export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config"
         export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config"
-        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lindroid.config vendor/feature/lmkd.config vendor/feature/lto.config"
-    elif [[ "$DEVICE_IMPORT" == "sdm439" ]]; then
+        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lto.config"
+        # Kernel name
+        export KERNEL_NAME="-Mi8937v2-neon"
+    elif [[ "$DEVICE_IMPORT" == "mi89x7-lineageos" ]]; then
         # Editable defconfig
         export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
         # Do not use for edit
         export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
         export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config"
-        export DEVICE_DEFCONFIG="vendor/xiaomi/sdm439/sdm4349.config"
-        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lindroid.config vendor/feature/lmkd.config vendor/feature/lto.config"
+        export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config"
+        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lineageos.config vendor/feature/lto.config"
+        # Kernel name
+        export KERNEL_NAME="-perf-neon"
     else
         echo "Invalid MAIN_DEFCONFIG_IMPORT. Use a valid defconfig filename from arch/arm64/configs/vendor/ directory."
         exit 1
@@ -91,8 +95,6 @@ add_patches() {
     echo "Applying O3 to the Makefile..."
     sed -i 's/KBUILD_CFLAGS\s\++= -O2/KBUILD_CFLAGS   += -O3/g' Makefile
     sed -i 's/LDFLAGS\s\++= -O2/LDFLAGS += -O3/g' Makefile
-    # Enable config mismatch
-    # echo "CONFIG_DEBUG_SECTION_MISMATCH=y" >> $MAIN_DEFCONFIG
 }
 
 # Add KernelSU function
@@ -156,6 +158,7 @@ compile_kernel() {
             echo "Warning: Fragment arch/arm64/configs/$fragment not found!"
         fi
     done
+    echo "CONFIG_LOCALVERSION=\"$KERNEL_NAME\"" >> out/.config
     yes "" | make O=out \
         ARCH=arm64 \
         LLVM=1 \
@@ -221,7 +224,7 @@ main() {
     echo "Validating input arguments..."
     if [ $# -ne 2 ]; then
         echo "Usage: $0 <DEVICE_IMPORT> <KERNELSU_SELECTOR>"
-        echo "Example: $0 mi89x7 --ksu=KSU_BLXX"
+        echo "Example: $0 mi89x7-community --ksu=KSU_BLXX"
         exit 1
     fi
     setup_environment "$1" "$2"

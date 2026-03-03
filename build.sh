@@ -131,7 +131,22 @@ add_ksu() {
 compile_kernel() {
     # Merge defconfig
     mkdir -p out
-    make O=out ARCH=arm64 $ACTUAL_MAIN_DEFCONFIG
+    make O=out \
+        ARCH=arm64 \
+        LLVM=1 \
+        LLVM_IAS=1 \
+        CC=clang \
+        LD=ld.lld \
+        AR=llvm-ar \
+        AS=llvm-as \
+        NM=llvm-nm \
+        OBJCOPY=llvm-objcopy \
+        OBJDUMP=llvm-objdump \
+        STRIP=llvm-strip \
+        CROSS_COMPILE=aarch64-linux-android- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+        CLANG_TRIPLE=aarch64-linux-gnu- \
+        $ACTUAL_MAIN_DEFCONFIG
     echo "Appending fragments to .config..."
     for fragment in $COMMON_DEFCONFIG $DEVICE_DEFCONFIG $FEATURE_DEFCONFIG; do
         if [ -f "arch/arm64/configs/$fragment" ]; then
@@ -141,8 +156,38 @@ compile_kernel() {
             echo "Warning: Fragment arch/arm64/configs/$fragment not found!"
         fi
     done
-    yes "" | make O=out ARCH=arm64 olddefconfig
-    yes "" | make O=out ARCH=arm64 syncconfig
+    yes "" | make O=out \
+        ARCH=arm64 \
+        LLVM=1 \
+        LLVM_IAS=1 \
+        CC=clang \
+        LD=ld.lld \
+        AR=llvm-ar \
+        AS=llvm-as \
+        NM=llvm-nm \
+        OBJCOPY=llvm-objcopy \
+        OBJDUMP=llvm-objdump \
+        STRIP=llvm-strip \
+        CROSS_COMPILE=aarch64-linux-android- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+        CLANG_TRIPLE=aarch64-linux-gnu- \
+        olddefconfig
+    yes "" | make O=out \
+        ARCH=arm64 \
+        LLVM=1 \
+        LLVM_IAS=1 \
+        CC=clang \
+        LD=ld.lld \
+        AR=llvm-ar \
+        AS=llvm-as \
+        NM=llvm-nm \
+        OBJCOPY=llvm-objcopy \
+        OBJDUMP=llvm-objdump \
+        STRIP=llvm-strip \
+        CROSS_COMPILE=aarch64-linux-android- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+        CLANG_TRIPLE=aarch64-linux-gnu- \
+        syncconfig
     # Do a git cleanup before compiling
     echo "Cleaning up git before compiling..."
     git config user.email $GIT_EMAIL

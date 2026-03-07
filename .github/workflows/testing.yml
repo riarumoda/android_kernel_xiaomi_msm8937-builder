@@ -91,9 +91,9 @@ jobs:
           cd android_kernel_xiaomi_msm8937/
           echo "Starting to compile..."
           if [[ "${{ matrix.build-type }}" == "mi89x7-community" ]]; then
-            ./build.sh mi89x7-community --ksu=KSU_BLXX
+            ./build.sh mi89x7-community --ksu=KSU_NEXT
           elif [[ "${{ matrix.build-type }}" == "mi89x7-lineageos" ]]; then
-            ./build.sh mi89x7-lineageos --ksu=KSU_BLXX
+            ./build.sh mi89x7-lineageos --ksu=KSU_NEXT
           fi
           cd ..
           ls -la android_kernel_xiaomi_msm8937/out/arch/arm64/boot/

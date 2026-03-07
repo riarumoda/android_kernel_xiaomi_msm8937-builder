@@ -16,5 +16,5 @@ Compatible with community ROM builds for [Mi8937 & Mi8917](https://t.me/mi_msm89
 # Credits
 [TBYOOL](https://github.com/tbyool) for the buildscripts & kernel patches.    
 [backslashxx](https://github.com/backslashxx) for KernelSU & KernelSU scope-minimized manual hooks.   
-[0xCAFEBABE](https://github.com/me-cafebabe) for the guidance.
-[JackA1ltman](https://github.com/JackA1ltman) for susfs inline hooks and susfs patches.
+[0xCAFEBABE](https://github.com/me-cafebabe) for the guidance.   
+[JackA1ltman](https://github.com/JackA1ltman) for susfs inline hooks and susfs patches.   

@@ -93,6 +93,9 @@ setup_toolchain() {
 
 # Add patches function
 add_patches() {
+    # Set HZ to 250
+    echo "Applying additional patches..."
+    sed -i 's/CONFIG_HZ_100=y/CONFIG_HZ_250=y/' $MAIN_DEFCONFIG
     # Apply O3 flags into Kernel Makefile
     echo "Applying O3 to the Makefile..."
     sed -i 's/KBUILD_CFLAGS\s\++= -O2/KBUILD_CFLAGS   += -O3/g' Makefile

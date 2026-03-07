@@ -109,7 +109,7 @@ add_ksu() {
         if [[ "$KSU_SETUP_URI" == *"backslashxx/KernelSU"* ]]; then
             # Apply manual hook
             # disable for now, we're gonna use hookless mode
-            # wget -qO- $KSU_GENERAL_PATCH | patch -s -p1
+            # curl -LSs $KSU_GENERAL_PATCH | bash
             # Run Setup Script
             curl -LSs $KSU_SETUP_URI | bash -s $KSU_BRANCH
             # Manual Config Enablement
@@ -125,7 +125,7 @@ add_ksu() {
             echo "CONFIG_MANUAL_HOOK=y" >> $MAIN_DEFCONFIG
             echo "CONFIG_KSU_STATIC_HOOKS=y" >> $MAIN_DEFCONFIG
             # Apply SUSFS patches
-            wget -qO- $JACK_SUSFS_PATCH | patch -s -p1 --fuzz=10
+            wget -qO- $JACK_SUSFS_PATCH | patch -s -p1 --fuzz=5
             # Manual Config Enablement for SUSFS
             echo "CONFIG_KSU_SUSFS=y" >> $MAIN_DEFCONFIG
             echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> $MAIN_DEFCONFIG

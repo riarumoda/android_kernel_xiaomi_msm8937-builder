@@ -52,11 +52,11 @@ setup_environment() {
     if [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_BLXX" ]]; then
         export KSU_SETUP_URI="https://github.com/backslashxx/KernelSU/raw/refs/heads/master/kernel/setup.sh"
         export KSU_BRANCH="master"
-        export KSU_GENERAL_PATCH="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/49f07744f13de12606b1d4ebc5eeac60b19c97e4.patch"
+        export KSU_GENERAL_PATCH="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/raw/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh"
     elif [[ "$KERNELSU_SELECTOR" == "--ksu=KSU_NEXT" ]]; then
         export KSU_SETUP_URI="https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh"
         export KSU_BRANCH="legacy_susfs"
-        export KSU_GENERAL_PATCH="https://github.com/zeta96/android_kernel_xiaomi_msm8937/commit/49f07744f13de12606b1d4ebc5eeac60b19c97e4.patch"
+        export KSU_GENERAL_PATCH="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/raw/refs/heads/mainline/Patches/susfs_inline_hook_patches.sh"
     elif [[ "$KERNELSU_SELECTOR" == "--ksu=NONE" ]]; then
         export KSU_SETUP_URI=""
         export KSU_BRANCH=""
@@ -117,14 +117,12 @@ add_ksu() {
             echo "CONFIG_KSU_TAMPER_SYSCALL_TABLE=y" >> $MAIN_DEFCONFIG
         elif [[ "$KSU_SETUP_URI" == *"KernelSU-Next/KernelSU-Next"* ]]; then
             # Apply manual hook
-            # disable for now, we're gonna use kprobes mode
-            # wget -qO- $KSU_GENERAL_PATCH | patch -s -p1
+            curl -LSs $KSU_GENERAL_PATCH | bash
             # Run Setup Script
             curl -LSs $KSU_SETUP_URI | bash -s $KSU_BRANCH
             # Manual Config Enablement
             echo "CONFIG_KSU=y" >> $MAIN_DEFCONFIG
-            echo "CONFIG_KSU_KPROBES_HOOK=y" >> $MAIN_DEFCONFIG
-            echo "CONFIG_HAVE_SYSCALL_TRACEPOINTS=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_MANUAL_HOOK=y" >> $MAIN_DEFCONFIG
             # Apply SUSFS patches
             wget -qO- $JACK_SUSFS_PATCH | patch -s -p1 --fuzz=5
             # Manual Config Enablement for SUSFS

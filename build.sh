@@ -123,8 +123,9 @@ add_ksu() {
             # Manual Config Enablement
             echo "CONFIG_KSU=y" >> $MAIN_DEFCONFIG
             echo "CONFIG_MANUAL_HOOK=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_STATIC_HOOKS=y" >> $MAIN_DEFCONFIG
             # Apply SUSFS patches
-            wget -qO- $JACK_SUSFS_PATCH | patch -s -p1 --fuzz=5
+            wget -qO- $JACK_SUSFS_PATCH | patch -s -p1 --fuzz=10
             # Manual Config Enablement for SUSFS
             echo "CONFIG_KSU_SUSFS=y" >> $MAIN_DEFCONFIG
             echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> $MAIN_DEFCONFIG

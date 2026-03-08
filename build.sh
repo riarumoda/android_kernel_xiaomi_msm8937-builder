@@ -99,6 +99,7 @@ add_patches() {
     echo "Setting up Baseband Guard..."
     curl -LSs $BBG_SETUP_URI | bash
     echo "CONFIG_BBG=y" >> $MAIN_DEFCONFIG
+    sed -i '/CONFIG_LSM=/s/"$/ ,baseband_guard"/' $MAIN_DEFCONFIG
     # Set HZ to 250
     echo "Applying additional patches..."
     sed -i 's/CONFIG_HZ_100=y/CONFIG_HZ_250=y/' $MAIN_DEFCONFIG

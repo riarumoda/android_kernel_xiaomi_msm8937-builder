@@ -69,6 +69,8 @@ setup_environment() {
     export KSU_UMOUNT_PATCH="https://github.com/tbyool/android_kernel_xiaomi_sm6150/commit/64db0dfa2f8aa6c519dbf21eb65c9b89643cda3d.patch"
     # JackA1ltman Patches
     export JACK_SUSFS_PATCH="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/raw/refs/heads/mainline/Patches/Patch/susfs_patch_to_4.19.patch"
+    # Baseband Guard setup
+    export BBG_SETUP_URI="https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh"
 }
 
 # Setup toolchain function
@@ -93,6 +95,10 @@ setup_toolchain() {
 
 # Add patches function
 add_patches() {
+    # Setup Baseband Guard
+    echo "Setting up Baseband Guard..."
+    curl -LSs $BBG_SETUP_URI | bash
+    echo "CONFIG_BBG=y" >> $MAIN_DEFCONFIG
     # Set HZ to 250
     echo "Applying additional patches..."
     sed -i 's/CONFIG_HZ_100=y/CONFIG_HZ_250=y/' $MAIN_DEFCONFIG

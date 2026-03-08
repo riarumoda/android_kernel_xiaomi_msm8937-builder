@@ -24,27 +24,7 @@ setup_environment() {
     export GCC32_DIR=$PWD/gcc32
     export PATH="$CLANG_DIR/bin/:$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH"
     # Defconfig Settings - v2
-    if [[ "$DEVICE_IMPORT" == "mi89x7-community" ]]; then
-        # Editable defconfig
-        export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
-        # Do not use for edit
-        export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
-        export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config"
-        export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config"
-        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/exfat.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lto.config"
-        # Kernel name
-        export KERNEL_NAME="-Mi8937v2-neon"
-    elif [[ "$DEVICE_IMPORT" == "mi89x7-lineageos" ]]; then
-        # Editable defconfig
-        export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
-        # Do not use for edit
-        export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
-        export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config"
-        export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config"
-        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lineageos.config vendor/feature/lto.config"
-        # Kernel name
-        export KERNEL_NAME="-perf-neon"
-    elif [[ "$DEVICE_IMPORT" == "sdm439-community" ]]; then
+    if [[ "$DEVICE_IMPORT" == "mi89x7-mi439-community" ]]; then
         # Editable defconfig
         export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
         # Do not use for edit
@@ -53,7 +33,17 @@ setup_environment() {
         export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config vendor/xiaomi/sdm439/mi439.config"
         export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/exfat.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lto.config"
         # Kernel name
-        export KERNEL_NAME="-Mi8937v2-neon"
+        export KERNEL_NAME="-Mi8937v2-Mi8917-Mi439-neon"
+    elif [[ "$DEVICE_IMPORT" == "mi89x7-mi439-lineageos" ]]; then
+        # Editable defconfig
+        export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
+        # Do not use for edit
+        export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
+        export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config"
+        export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config vendor/xiaomi/sdm439/mi439.config"
+        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lineageos.config vendor/feature/lto.config"
+        # Kernel name
+        export KERNEL_NAME="-perf-neon"
     else
         echo "Invalid MAIN_DEFCONFIG_IMPORT. Use a valid defconfig filename from arch/arm64/configs/vendor/ directory."
         exit 1
@@ -253,7 +243,7 @@ main() {
     echo "Validating input arguments..."
     if [ $# -ne 2 ]; then
         echo "Usage: $0 <DEVICE_IMPORT> <KERNELSU_SELECTOR>"
-        echo "Example: $0 mi89x7-community --ksu=KSU_BLXX"
+        echo "Example: $0 mi89x7-mi439-community --ksu=KSU_BLXX"
         exit 1
     fi
     setup_environment "$1" "$2"

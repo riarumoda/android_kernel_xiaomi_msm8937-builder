@@ -40,91 +40,27 @@ jobs:
           if [ -d "$PWD/android_kernel_xiaomi_msm8937" ]; then
             rm -rf android_kernel_xiaomi_msm8937
           fi
-          if [[ "${{ matrix.build-type }}" == "mi89x7-community" ]]; then
-            # Main source
-            git clone https://github.com/Mi-Thorium/kernel_msm-4.19 --depth=1 -b "mithorium/a13/master" android_kernel_xiaomi_msm8937
-            # Dts vendor-legacy
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_msm-4.19 --depth=1 -b "dts/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/vendor-legacy
-            # Dts msm8937
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-msm8937 --depth=1 -b "dts/mi8937/4.19/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/xiaomi-msm8937
-            # Dts sdm439
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-sdm439 --depth=1 -b "dts/mi439/4.19/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/xiaomi-sdm439
-            # Techpack msm8937
-            git clone https://github.com/Mi-Thorium/kernel_techpack_xiaomi-msm8937 --depth=1 -b "techpack/mi8937/4.19/master" android_kernel_xiaomi_msm8937/techpack/xiaomi-msm8937
-            # Techpack sdm439
-            git clone https://github.com/Mi-Thorium/kernel_techpack_xiaomi-sdm439 --depth=1 -b "techpack/mi439/4.19/master" android_kernel_xiaomi_msm8937/techpack/xiaomi-sdm439
-            # Techpack audio-legacy
-            git clone https://github.com/Mi-Thorium/kernel_techpack_audio-legacy --depth=1 -b "audio/4.19/mithorium/master" android_kernel_xiaomi_msm8937/techpack/audio-legacy
-            # Techpack camera-legacy
-            git clone https://github.com/Mi-Thorium/kernel_techpack_camera-legacy --depth=1 -b "camera/LA.UM.8.6.r1-05300-89xx.0/4.19/mithorium" android_kernel_xiaomi_msm8937/techpack/camera-legacy
-            # Techpack camera-legacy-m
-            git clone https://github.com/Mi-Thorium/kernel_techpack_camera-legacy --depth=1 -b "camera/LA.UM.5.3-10610-89xx.0/4.19/mithorium" android_kernel_xiaomi_msm8937/techpack/camera-legacy-m
-            # Prima WIFI
-            git clone https://github.com/Mi-Thorium/vendor_qcom_opensource_wlan_prima --depth=1 -b "wlan/LA.UM.9.6.4/mithorium/master" android_kernel_xiaomi_msm8937/drivers/staging/prima
-          elif [[ "${{ matrix.build-type }}" == "mi89x7-lineageos" ]]; then
-            # Main source
-            git clone https://github.com/Mi-Thorium/kernel_msm-4.19 --depth=1 -b "mithorium/a13/master" android_kernel_xiaomi_msm8937
-            # Dts vendor-legacy
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_msm-4.19 --depth=1 -b "dts/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/vendor-legacy
-            # Dts msm8937
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-msm8937 --depth=1 -b "dts/mi8937/4.19/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/xiaomi-msm8937
-            # Dts sdm439
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-sdm439 --depth=1 -b "dts/mi439/4.19/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/xiaomi-sdm439
-            # Techpack msm8937
-            git clone https://github.com/Mi-Thorium/kernel_techpack_xiaomi-msm8937 --depth=1 -b "techpack/mi8937/4.19/master" android_kernel_xiaomi_msm8937/techpack/xiaomi-msm8937
-            # Techpack sdm439
-            git clone https://github.com/Mi-Thorium/kernel_techpack_xiaomi-sdm439 --depth=1 -b "techpack/mi439/4.19/master" android_kernel_xiaomi_msm8937/techpack/xiaomi-sdm439
-            # Techpack audio-legacy
-            git clone https://github.com/Mi-Thorium/kernel_techpack_audio-legacy --depth=1 -b "audio/4.19/mithorium/master" android_kernel_xiaomi_msm8937/techpack/audio-legacy
-            # Techpack camera-legacy
-            git clone https://github.com/Mi-Thorium/kernel_techpack_camera-legacy --depth=1 -b "camera/LA.UM.8.6.r1-05300-89xx.0/4.19/mithorium" android_kernel_xiaomi_msm8937/techpack/camera-legacy
-            # Techpack camera-legacy-m
-            git clone https://github.com/Mi-Thorium/kernel_techpack_camera-legacy --depth=1 -b "camera/LA.UM.5.3-10610-89xx.0/4.19/mithorium" android_kernel_xiaomi_msm8937/techpack/camera-legacy-m
-            # Prima WIFI
-            git clone https://github.com/Mi-Thorium/vendor_qcom_opensource_wlan_prima --depth=1 -b "wlan/LA.UM.9.6.4/mithorium/master" android_kernel_xiaomi_msm8937/drivers/staging/prima
-          elif [[ "${{ matrix.build-type }}" == "mi439-community" ]]; then
-            # Main source
-            git clone https://github.com/Mi-Thorium/kernel_msm-4.19 --depth=1 -b "mithorium/a13/master" android_kernel_xiaomi_msm8937
-            # Dts vendor-legacy
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_msm-4.19 --depth=1 -b "dts/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/vendor-legacy
-            # Dts msm8937
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-msm8937 --depth=1 -b "dts/mi8937/4.19/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/xiaomi-msm8937
-            # Dts sdm439
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-sdm439 --depth=1 -b "dts/mi439/4.19/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/xiaomi-sdm439
-            # Techpack msm8937
-            git clone https://github.com/Mi-Thorium/kernel_techpack_xiaomi-msm8937 --depth=1 -b "techpack/mi8937/4.19/master" android_kernel_xiaomi_msm8937/techpack/xiaomi-msm8937
-            # Techpack sdm439
-            git clone https://github.com/Mi-Thorium/kernel_techpack_xiaomi-sdm439 --depth=1 -b "techpack/mi439/4.19/master" android_kernel_xiaomi_msm8937/techpack/xiaomi-sdm439
-            # Techpack audio-legacy
-            git clone https://github.com/Mi-Thorium/kernel_techpack_audio-legacy --depth=1 -b "audio/4.19/mithorium/master" android_kernel_xiaomi_msm8937/techpack/audio-legacy
-            # Techpack camera-legacy
-            git clone https://github.com/Mi-Thorium/kernel_techpack_camera-legacy --depth=1 -b "camera/LA.UM.8.6.r1-05300-89xx.0/4.19/mithorium" android_kernel_xiaomi_msm8937/techpack/camera-legacy
-            # Techpack camera-legacy-m
-            git clone https://github.com/Mi-Thorium/kernel_techpack_camera-legacy --depth=1 -b "camera/LA.UM.5.3-10610-89xx.0/4.19/mithorium" android_kernel_xiaomi_msm8937/techpack/camera-legacy-m
-            # Prima WIFI
-            git clone https://github.com/Mi-Thorium/vendor_qcom_opensource_wlan_prima --depth=1 -b "wlan/LA.UM.9.6.4/mithorium/master" android_kernel_xiaomi_msm8937/drivers/staging/prima
-          elif [[ "${{ matrix.build-type }}" == "mi439-lineageos" ]]; then
-            # Main source
-            git clone https://github.com/Mi-Thorium/kernel_msm-4.19 --depth=1 -b "mithorium/a13/master" android_kernel_xiaomi_msm8937
-            # Dts vendor-legacy
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_msm-4.19 --depth=1 -b "dts/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/vendor-legacy
-            # Dts msm8937
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-msm8937 --depth=1 -b "dts/mi8937/4.19/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/xiaomi-msm8937
-            # Dts sdm439
-            git clone https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-sdm439 --depth=1 -b "dts/mi439/4.19/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/xiaomi-sdm439
-            # Techpack msm8937
-            git clone https://github.com/Mi-Thorium/kernel_techpack_xiaomi-msm8937 --depth=1 -b "techpack/mi8937/4.19/master" android_kernel_xiaomi_msm8937/techpack/xiaomi-msm8937
-            # Techpack sdm439
-            git clone https://github.com/Mi-Thorium/kernel_techpack_xiaomi-sdm439 --depth=1 -b "techpack/mi439/4.19/master" android_kernel_xiaomi_msm8937/techpack/xiaomi-sdm439
-            # Techpack audio-legacy
-            git clone https://github.com/Mi-Thorium/kernel_techpack_audio-legacy --depth=1 -b "audio/4.19/mithorium/master" android_kernel_xiaomi_msm8937/techpack/audio-legacy
-            # Techpack camera-legacy
-            git clone https://github.com/Mi-Thorium/kernel_techpack_camera-legacy --depth=1 -b "camera/LA.UM.8.6.r1-05300-89xx.0/4.19/mithorium" android_kernel_xiaomi_msm8937/techpack/camera-legacy
-            # Techpack camera-legacy-m
-            git clone https://github.com/Mi-Thorium/kernel_techpack_camera-legacy --depth=1 -b "camera/LA.UM.5.3-10610-89xx.0/4.19/mithorium" android_kernel_xiaomi_msm8937/techpack/camera-legacy-m
-            # Prima WIFI
-            git clone https://github.com/Mi-Thorium/vendor_qcom_opensource_wlan_prima --depth=1 -b "wlan/LA.UM.9.6.4/mithorium/master" android_kernel_xiaomi_msm8937/drivers/staging/prima
-          fi
+          # Main source
+          git clone https://github.com/Mi-Thorium/kernel_msm-4.19 --depth=1 -b "mithorium/a13/master" android_kernel_xiaomi_msm8937
+          # Dts vendor-legacy
+          git clone https://github.com/Mi-Thorium/kernel_devicetree_msm-4.19 --depth=1 -b "dts/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/vendor-legacy
+          # Dts msm8937
+          git clone https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-msm8937 --depth=1 -b "dts/mi8937/4.19/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/xiaomi-msm8937
+          # Dts sdm439
+          git clone https://github.com/Mi-Thorium/kernel_devicetree_xiaomi-sdm439 --depth=1 -b "dts/mi439/4.19/master" android_kernel_xiaomi_msm8937/arch/arm64/boot/dts/xiaomi-sdm439
+          # Techpack msm8937
+          git clone https://github.com/Mi-Thorium/kernel_techpack_xiaomi-msm8937 --depth=1 -b "techpack/mi8937/4.19/master" android_kernel_xiaomi_msm8937/techpack/xiaomi-msm8937
+          # Techpack sdm439
+          git clone https://github.com/Mi-Thorium/kernel_techpack_xiaomi-sdm439 --depth=1 -b "techpack/mi439/4.19/master" android_kernel_xiaomi_msm8937/techpack/xiaomi-sdm439
+          # Techpack audio-legacy
+          git clone https://github.com/Mi-Thorium/kernel_techpack_audio-legacy --depth=1 -b "audio/4.19/mithorium/master" android_kernel_xiaomi_msm8937/techpack/audio-legacy
+          # Techpack camera-legacy
+          git clone https://github.com/Mi-Thorium/kernel_techpack_camera-legacy --depth=1 -b "camera/LA.UM.8.6.r1-05300-89xx.0/4.19/mithorium" android_kernel_xiaomi_msm8937/techpack/camera-legacy
+          # Techpack camera-legacy-m
+          git clone https://github.com/Mi-Thorium/kernel_techpack_camera-legacy --depth=1 -b "camera/LA.UM.5.3-10610-89xx.0/4.19/mithorium" android_kernel_xiaomi_msm8937/techpack/camera-legacy-m
+          # Prima WIFI
+          git clone https://github.com/Mi-Thorium/vendor_qcom_opensource_wlan_prima --depth=1 -b "wlan/LA.UM.9.6.4/mithorium/master" android_kernel_xiaomi_msm8937/drivers/staging/prima
+          # Final
           cp build.sh android_kernel_xiaomi_msm8937/
           chmod +x ./android_kernel_xiaomi_msm8937/build.sh
 
@@ -155,33 +91,33 @@ jobs:
             sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
             sed -i 's/device.name1=sweet/device.name1=mi8937/' AnyKernel3/anykernel.sh
             sed -i 's/device.name2=sweetin/device.name2=mi8917/' AnyKernel3/anykernel.sh
-            sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=mi439\ndevice.name9=pine\ndevice.name10=olive\ndevice.name11=olivelite\ndevice.name12=olivewood\ndevice.name13=ugg' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/mi8937, mi8917, mi439 (msm8937 and sdm439)/g' AnyKernel3/banner
+            sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=ugg' AnyKernel3/anykernel.sh
+            sed -i 's/sweet (sm6150)/mi8937 and mi8917 (msm8937)/g' AnyKernel3/banner
           elif [[ "${{ matrix.build-type }}" == "mi89x7-lineageos" ]]; then
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
             sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
             sed -i 's/device.name1=sweet/device.name1=mi8937/' AnyKernel3/anykernel.sh
             sed -i 's/device.name2=sweetin/device.name2=mi8917/' AnyKernel3/anykernel.sh
-            sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=mi439\ndevice.name9=pine\ndevice.name10=olive\ndevice.name11=olivelite\ndevice.name12=olivewood\ndevice.name13=ugg' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/mi8937, mi8917, mi439 (msm8937 and sdm439)/g' AnyKernel3/banner
+            sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=ugg' AnyKernel3/anykernel.sh
+            sed -i 's/sweet (sm6150)/mi8937 and mi8917 (msm8937)/g' AnyKernel3/banner
           elif [[ "${{ matrix.build-type }}" == "mi439-community" ]]; then
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/Image.gz AnyKernel3/
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/dtb.img AnyKernel3/
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/dtbo.img AnyKernel3/
             sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=mi8937/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=mi8917/' AnyKernel3/anykernel.sh
-            sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=mi439\ndevice.name9=pine\ndevice.name10=olive\ndevice.name11=olivelite\ndevice.name12=olivewood\ndevice.name13=ugg' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/mi8937, mi8917, mi439 (msm8937 and sdm439)/g' AnyKernel3/banner
+            sed -i 's/device.name1=sweet/device.name1=mi439/' AnyKernel3/anykernel.sh
+            sed -i 's/device.name2=sweetin/device.name2=mi439/' AnyKernel3/anykernel.sh
+            sed -i '/device.name2=mi439/a device.name3=pine\ndevice.name4=olive\ndevice.name5=olivelite\ndevice.name6=olivewood' AnyKernel3/anykernel.sh
+            sed -i 's/sweet (sm6150)/mi439 (sdm439)/g' AnyKernel3/banner
           elif [[ "${{ matrix.build-type }}" == "mi439-lineageos" ]]; then
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/Image.gz AnyKernel3/
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/dtb.img AnyKernel3/
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/dtbo.img AnyKernel3/
             sed -i 's/supported.versions=11-16/supported.versions=11-16/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name1=sweet/device.name1=mi8937/' AnyKernel3/anykernel.sh
-            sed -i 's/device.name2=sweetin/device.name2=mi8917/' AnyKernel3/anykernel.sh
-            sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=mi439\ndevice.name9=pine\ndevice.name10=olive\ndevice.name11=olivelite\ndevice.name12=olivewood\ndevice.name13=ugg' AnyKernel3/anykernel.sh
-            sed -i 's/sweet (sm6150)/mi8937, mi8917, mi439 (msm8937 and sdm439)/g' AnyKernel3/banner
+            sed -i 's/device.name1=sweet/device.name1=mi439/' AnyKernel3/anykernel.sh
+            sed -i 's/device.name2=sweetin/device.name2=mi439/' AnyKernel3/anykernel.sh
+            sed -i '/device.name2=mi439/a device.name3=pine\ndevice.name4=olive\ndevice.name5=olivelite\ndevice.name6=olivewood' AnyKernel3/anykernel.sh
+            sed -i 's/sweet (sm6150)/mi439 (sdm439)/g' AnyKernel3/banner
           fi    
 
       - name: Pack & upload artifacts (All builds)

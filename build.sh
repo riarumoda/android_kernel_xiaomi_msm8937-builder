@@ -24,6 +24,7 @@ setup_environment() {
     export GCC32_DIR=$PWD/gcc32
     export PATH="$CLANG_DIR/bin/:$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH"
     # Defconfig Settings - v2
+    export SELECTED_DEVICE="$DEVICE_IMPORT"
     if [[ "$DEVICE_IMPORT" == "mi89x7-community" ]]; then
         # Editable defconfig
         export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
@@ -123,7 +124,7 @@ setup_toolchain() {
 # Add patches function
 add_patches() {
     # Apply DTBO patches
-    if [[ "$DEVICE_IMPORT" == *"mi439"* ]]; then
+    if [[ "$SELECTED_DEVICE" == *"mi439"* ]]; then
         echo "Applying DTBO patches..."
         wget -qO- $DTBO_PATCH1 | patch -s -p1
         wget -qO- $DTBO_PATCH2 | patch -s -p1

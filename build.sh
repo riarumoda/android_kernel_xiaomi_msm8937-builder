@@ -32,7 +32,7 @@ setup_environment() {
         export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
         export COMMON_DEFCONFIG="vendor/msm8937-legacy.config vendor/common.config"
         export DEVICE_DEFCONFIG="vendor/xiaomi/msm8937/common.config vendor/xiaomi/msm8937/mi8937.config"
-        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/exfat.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lto.config"
+        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/exfat.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lto.config vendor/feature/ntfs.config vendor/feature/wireguard.config"
         # Kernel name
         export KERNEL_NAME="-Mi8937v2-neon"
     elif [[ "$DEVICE_IMPORT" == "mi89x7-lineageos" ]]; then
@@ -52,7 +52,7 @@ setup_environment() {
         export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
         export COMMON_DEFCONFIG="vendor/common.config vendor/msm-clk.config"
         export DEVICE_DEFCONFIG="vendor/xiaomi/sdm439/mi439.config"
-        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/exfat.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lto.config"
+        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/exfat.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lto.config vendor/feature/ntfs.config vendor/feature/wireguard.config"
         # Kernel name
         export KERNEL_NAME="-Mi439-neon"
     elif [[ "$DEVICE_IMPORT" == "mi439-lineageos" ]]; then
@@ -132,15 +132,14 @@ add_patches() {
         wget -qO- $DTBO_PATCH4 | patch -s -p1
         wget -qO- $DTBO_PATCH5 | patch -s -p1
         wget -qO- $DTBO_PATCH6 | patch -s -p1
+    else
+        echo "No DTBO patches to apply for this device."
     fi
     # Setup Baseband Guard
     echo "Setting up Baseband Guard..."
     curl -LSs $BBG_SETUP_URI | bash
     echo "CONFIG_BBG=y" >> $MAIN_DEFCONFIG
     sed -i '/CONFIG_LSM=/s/"$/ ,baseband_guard"/' $MAIN_DEFCONFIG
-    # Set HZ to 250
-    echo "Applying additional patches..."
-    sed -i 's/CONFIG_HZ_100=y/CONFIG_HZ_250=y/' $MAIN_DEFCONFIG
     # Apply O3 flags into Kernel Makefile
     echo "Applying O3 to the Makefile..."
     sed -i 's/KBUILD_CFLAGS\s\++= -O2/KBUILD_CFLAGS   += -O3/g' Makefile

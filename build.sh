@@ -44,6 +44,26 @@ setup_environment() {
         export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lineageos.config vendor/feature/lto.config"
         # Kernel name
         export KERNEL_NAME="-perf-neon"
+    elif [[ "$DEVICE_IMPORT" == "mi439-community" ]]; then
+        # Editable defconfig
+        export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
+        # Do not use for edit
+        export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
+        export COMMON_DEFCONFIG="vendor/common.config vendor/msm-clk.config"
+        export DEVICE_DEFCONFIG="vendor/xiaomi/sdm439/mi439.config"
+        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/exfat.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lto.config"
+        # Kernel name
+        export KERNEL_NAME="-Mi439-neon"
+    elif [[ "$DEVICE_IMPORT" == "mi439-lineageos" ]]; then
+        # Editable defconfig
+        export MAIN_DEFCONFIG="arch/arm64/configs/vendor/msm8937-perf_defconfig"
+        # Do not use for edit
+        export ACTUAL_MAIN_DEFCONFIG="vendor/msm8937-perf_defconfig"
+        export COMMON_DEFCONFIG="vendor/common.config vendor/msm-clk.config"
+        export DEVICE_DEFCONFIG="vendor/xiaomi/sdm439/mi439.config"
+        export FEATURE_DEFCONFIG="vendor/feature/android-12.config vendor/feature/erofs.config vendor/feature/kprobes.config vendor/feature/lmkd.config vendor/feature/lineageos.config vendor/feature/lto.config"
+        # Kernel name
+        export KERNEL_NAME="-perf-neon"
     else
         echo "Invalid MAIN_DEFCONFIG_IMPORT. Use a valid defconfig filename from arch/arm64/configs/vendor/ directory."
         exit 1
@@ -71,6 +91,13 @@ setup_environment() {
     export JACK_SUSFS_PATCH="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/raw/refs/heads/mainline/Patches/Patch/susfs_patch_to_4.19.patch"
     # Baseband Guard setup
     export BBG_SETUP_URI="https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh"
+    # DTBO Exports
+    export DTBO_PATCH1="https://github.com/xiaomi-sm6150/android_kernel_xiaomi_sm6150/commit/e517bc363a19951ead919025a560f843c2c03ad3.patch"
+    export DTBO_PATCH2="https://github.com/xiaomi-sm6150/android_kernel_xiaomi_sm6150/commit/a62a3b05d0f29aab9c4bf8d15fe786a8c8a32c98.patch"
+    export DTBO_PATCH3="https://github.com/xiaomi-sm6150/android_kernel_xiaomi_sm6150/commit/4b89948ec7d610f997dd1dab813897f11f403a06.patch"
+    export DTBO_PATCH4="https://github.com/xiaomi-sm6150/android_kernel_xiaomi_sm6150/commit/fade7df36b01f2b170c78c63eb8fe0d11c613c4a.patch"
+    export DTBO_PATCH5="https://github.com/xiaomi-sm6150/android_kernel_xiaomi_sm6150/commit/2628183db0d96be8dae38a21f2b09cb10978f423.patch"
+    export DTBO_PATCH6="https://github.com/xiaomi-sm6150/android_kernel_xiaomi_sm6150/commit/31f4577af3f8255ae503a5b30d8f68906edde85f.patch"
 }
 
 # Setup toolchain function
@@ -95,6 +122,16 @@ setup_toolchain() {
 
 # Add patches function
 add_patches() {
+    # Apply DTBO patches
+    if [[ "$DEVICE_IMPORT" == *"mi439"* ]]; then
+        echo "Applying DTBO patches..."
+        wget -qO- $DTBO_PATCH1 | patch -s -p1
+        wget -qO- $DTBO_PATCH2 | patch -s -p1
+        wget -qO- $DTBO_PATCH3 | patch -s -p1
+        wget -qO- $DTBO_PATCH4 | patch -s -p1
+        wget -qO- $DTBO_PATCH5 | patch -s -p1
+        wget -qO- $DTBO_PATCH6 | patch -s -p1
+    fi
     # Setup Baseband Guard
     echo "Setting up Baseband Guard..."
     curl -LSs $BBG_SETUP_URI | bash

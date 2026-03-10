@@ -164,7 +164,7 @@ jobs:
             sed -i 's/device.name2=sweetin/device.name2=mi8917/' AnyKernel3/anykernel.sh
             sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=mi439\ndevice.name9=pine\ndevice.name10=olive\ndevice.name11=olivelite\ndevice.name12=olivewood\ndevice.name13=ugg' AnyKernel3/anykernel.sh
             sed -i 's/sweet (sm6150)/mi8937, mi8917, mi439 (msm8937 and sdm439)/g' AnyKernel3/banner
-          elif [[ "${{ matrix.build-type }}" == "mi89x7-community" ]]; then
+          elif [[ "${{ matrix.build-type }}" == "mi439-community" ]]; then
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/Image.gz AnyKernel3/
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/dtb.img AnyKernel3/
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/dtbo.img AnyKernel3/
@@ -173,7 +173,7 @@ jobs:
             sed -i 's/device.name2=sweetin/device.name2=mi8917/' AnyKernel3/anykernel.sh
             sed -i '/device.name2=mi8917/a device.name3=santoni\ndevice.name4=prada\ndevice.name5=rolex\ndevice.name6=ugglite\ndevice.name7=riva\ndevice.name8=mi439\ndevice.name9=pine\ndevice.name10=olive\ndevice.name11=olivelite\ndevice.name12=olivewood\ndevice.name13=ugg' AnyKernel3/anykernel.sh
             sed -i 's/sweet (sm6150)/mi8937, mi8917, mi439 (msm8937 and sdm439)/g' AnyKernel3/banner
-          elif [[ "${{ matrix.build-type }}" == "mi89x7-lineageos" ]]; then
+          elif [[ "${{ matrix.build-type }}" == "mi439-lineageos" ]]; then
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/Image.gz AnyKernel3/
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/dtb.img AnyKernel3/
             cp android_kernel_xiaomi_msm8937/out/arch/arm64/boot/dtbo.img AnyKernel3/

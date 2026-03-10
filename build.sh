@@ -140,6 +140,33 @@ add_patches() {
     curl -LSs $BBG_SETUP_URI | bash
     echo "CONFIG_BBG=y" >> $MAIN_DEFCONFIG
     sed -i '/CONFIG_LSM=/s/"$/ ,baseband_guard"/' $MAIN_DEFCONFIG
+    # Droidspaces support
+    echo "Adding Droidspaces support..."
+    echo "CONFIG_SYSCTL=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_SYSVIPC=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_POSIX_MQUEUE=y" >> $MAIN_DEFCONFIG
+    sed -i 's/# CONFIG_PID_NS is not set/CONFIG_PID_NS=y/' $MAIN_DEFCONFIG
+    echo "CONFIG_UTS_NS=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_IPC_NS=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_USER_NS=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_SECCOMP_FILTER=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_CGROUPS=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_CGROUP_DEVICE=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_CGROUP_PIDS=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_CGROUP_SCHED=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_FAIR_GROUP_SCHED=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_CFS_BANDWIDTH=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_CGROUP_NET_PRIO=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_DEVTMPFS=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_FW_LOADER=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_NET_NS=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_VETH=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_BRIDGE=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_NETFILTER_ADVANCED=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_NF_CONNTRACK_IPV4=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_NF_NAT_IPV4=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=y" >> $MAIN_DEFCONFIG
+    echo "CONFIG_NF_NAT_REDIRECT=y" >> $MAIN_DEFCONFIG
     # Apply O3 flags into Kernel Makefile
     echo "Applying O3 to the Makefile..."
     sed -i 's/KBUILD_CFLAGS\s\++= -O2/KBUILD_CFLAGS   += -O3/g' Makefile

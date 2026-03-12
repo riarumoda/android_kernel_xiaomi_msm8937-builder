@@ -169,7 +169,7 @@ jobs:
             > [!NOTE]   
             > - This build support Android 11 to 16.
             > - This build have KernelSU integration with backslashxx's KernelSU.   
-            > - KernelSU latest manager for backslashxx's KernelSU can be found in [here](https://github.com/backslashxx/KernelSU/releases) or in [here](https://t.me/kowsu_build).    
+            > - KernelSU latest manager for backslashxx's KernelSU can be found in [here](https://github.com/backslashxx/KernelSU/releases).    
                
             > [!CAUTION]   
             > - Always backup your boot image first before proceeding!   

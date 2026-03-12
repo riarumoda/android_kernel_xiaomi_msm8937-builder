@@ -154,14 +154,28 @@ add_ksu() {
         # disable for now, its already on the sources
         # wget -qO- $KSU_UMOUNT_PATCH | patch -s -p1
         if [[ "$KSU_SETUP_URI" == *"backslashxx/KernelSU"* ]]; then
-            # Apply manual hook
-            # disable for now, we're gonna use hookless mode
-            # curl -LSs $KSU_GENERAL_PATCH | bash
+            # Apply SUSFS patches
+            wget -qO- $JACK_SUSFS_PATCH | patch -s -p1 --fuzz=5
             # Run Setup Script
             curl -LSs $KSU_SETUP_URI | bash -s $KSU_BRANCH
+            # Apply manual hook
+            curl -LSs $KSU_GENERAL_PATCH | bash
             # Manual Config Enablement
             echo "CONFIG_KSU=y" >> $MAIN_DEFCONFIG
             echo "CONFIG_KSU_TAMPER_SYSCALL_TABLE=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_STATIC_HOOKS=y" >> $MAIN_DEFCONFIG
+            # Manual Config Enablement for SUSFS
+            echo "CONFIG_KSU_SUSFS=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_PATH=n" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_MOUNT=n" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_SUS_MAP=y" >> $MAIN_DEFCONFIG
+            echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=n" >> $MAIN_DEFCONFIG
         elif [[ "$KSU_SETUP_URI" == *"KernelSU-Next/KernelSU-Next"* ]]; then
             # Apply manual hook
             curl -LSs $KSU_GENERAL_PATCH | bash
